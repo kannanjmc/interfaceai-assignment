@@ -1,0 +1,20 @@
+{
+  "artifact_id": "discovery_lookup_member_20240830_120000",
+  "execution_type": "discovery",
+  "status": "success",
+  "outputs": {
+    "member_id": "12345",
+    "balance": 5432.10
+  },
+  "error_type": null,
+  "error_message": null,
+  "failed_step": null,
+  "expected": null,
+  "observed": null,
+  "business_outcome": null,
+  "steps_executed": 5,
+  "execution_time_seconds": 90.5,
+  "timestamp": "2024-08-30T12:01:30",
+  "required_human_handoff": false,
+  "handoff_reason": null
+}

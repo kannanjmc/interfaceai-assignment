@@ -1,0 +1,8 @@
+{"timestamp": "2024-08-30T12:03:00", "level": "info", "step": null, "message": "Started replay session", "details": {"session_id": "replay_error_20240830_120300", "artifact_id": "lookup_member_balance", "parameters": {"member_id": "99999"}}}
+{"timestamp": "2024-08-30T12:03:01", "level": "info", "step": 1, "message": "Executing step 1: navigate", "details": {"description": "Navigate to member lookup page", "url": "/lookup"}}
+{"timestamp": "2024-08-30T12:03:03", "level": "info", "step": 1, "message": "Checkpoint: url_contains", "details": {"passed": true, "value": "/lookup"}}
+{"timestamp": "2024-08-30T12:03:04", "level": "info", "step": 2, "message": "Executing step 2: type", "details": {"description": "Enter member ID in lookup field", "value": "99999"}}
+{"timestamp": "2024-08-30T12:03:06", "level": "info", "step": 3, "message": "Executing step 3: click", "details": {"description": "Click lookup button"}}
+{"timestamp": "2024-08-30T12:03:08", "level": "warning", "step": 3, "message": "Checkpoint: element_visible", "details": {"passed": false, "value": "table", "observed": "error message visible"}}
+{"timestamp": "2024-08-30T12:03:09", "level": "info", "step": 3, "message": "Error condition matched", "details": {"pattern": "member not found", "outcome_type": "business_outcome", "outcome_value": "not_found"}}
+{"timestamp": "2024-08-30T12:03:10", "level": "info", "step": null, "message": "Session finished with status: business_outcome", "details": {"business_outcome": "not_found", "steps_executed": 3, "execution_time_seconds": 10.5}}

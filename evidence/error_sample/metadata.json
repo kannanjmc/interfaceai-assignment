@@ -1,0 +1,12 @@
+{
+  "session_id": "replay_error_20240830_120300",
+  "execution_type": "replay",
+  "started_at": "2024-08-30T12:03:00",
+  "status": "business_outcome",
+  "finished_at": "2024-08-30T12:03:10",
+  "execution_time_seconds": 10.5,
+  "steps_executed": 3,
+  "artifact_id": "lookup_member_balance",
+  "error_type": null,
+  "error_message": null
+}

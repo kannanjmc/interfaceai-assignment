@@ -1,0 +1,10 @@
+{
+  "session_id": "discovery_lookup_member_20240830_120000",
+  "execution_type": "discovery",
+  "started_at": "2024-08-30T12:00:00",
+  "status": "success",
+  "finished_at": "2024-08-30T12:01:30",
+  "execution_time_seconds": 90.5,
+  "steps_executed": 5,
+  "goal": "Look up member 12345 and read their current savings balance"
+}

@@ -1,0 +1,9 @@
+{"timestamp": "2024-08-30T12:00:00", "level": "info", "step": null, "message": "Started discovery session", "details": {"session_id": "discovery_lookup_member_20240830_120000", "goal": "Look up member 12345 and read their current savings balance"}}
+{"timestamp": "2024-08-30T12:00:05", "level": "info", "step": 1, "message": "Action: navigate", "details": {"description": "Navigate to member lookup page", "url": "/lookup"}}
+{"timestamp": "2024-08-30T12:00:10", "level": "info", "step": 1, "message": "Checkpoint: url_contains", "details": {"passed": true, "value": "/lookup"}}
+{"timestamp": "2024-08-30T12:00:15", "level": "info", "step": 2, "message": "Action: type", "details": {"description": "Enter member ID in lookup field", "value": "12345"}}
+{"timestamp": "2024-08-30T12:00:20", "level": "info", "step": 3, "message": "Action: click", "details": {"description": "Click lookup button", "locator": "text: Lookup Member"}}
+{"timestamp": "2024-08-30T12:00:25", "level": "info", "step": 3, "message": "Checkpoint: element_visible", "details": {"passed": true, "value": "table"}}
+{"timestamp": "2024-08-30T12:00:30", "level": "info", "step": 4, "message": "Action: wait", "details": {"description": "Wait for member details to load", "condition": "text_present: Savings Balance"}}
+{"timestamp": "2024-08-30T12:00:35", "level": "info", "step": 5, "message": "Action: extract", "details": {"description": "Extract savings balance", "extracted_value": "5432.10"}}
+{"timestamp": "2024-08-30T12:01:30", "level": "info", "step": null, "message": "Session finished with status: success", "details": {"steps_executed": 5, "execution_time_seconds": 90.5}}

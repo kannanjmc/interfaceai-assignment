@@ -1,0 +1,205 @@
+{
+  "artifact_id": "lookup_member_balance",
+  "version": "1.0.0",
+  "created_at": "2024-08-30T12:01:30",
+  "name": "Lookup Member Savings Balance",
+  "description": "Navigate to member lookup, search by member ID, and extract current savings balance",
+  "target_app": "http://localhost:5000",
+  "target_type": "legacy_web",
+  "input_parameters": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "description": "Member ID to look up",
+      "required": true,
+      "example": "12345"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "balance",
+      "type": "number",
+      "description": "Current savings balance",
+      "locator": {
+        "css_selector": "#savings_balance"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "action_type": "navigate",
+      "description": "Navigate to member lookup page",
+      "locator": null,
+      "value": null,
+      "url": "http://localhost:5000/lookup",
+      "wait_condition": {
+        "type": "element_visible",
+        "value": "input[name='member_id']"
+      },
+      "extract_as": null,
+      "risk_level": "safe",
+      "requires_confirmation": false,
+      "expected_errors": [],
+      "retry_on_failure": false,
+      "max_retries": 0
+    },
+    {
+      "step_number": 2,
+      "action_type": "type",
+      "description": "Enter member ID in lookup field",
+      "locator": {
+        "locator_type": "text",
+        "primary": {
+          "type": "css_selector",
+          "value": "input[name='member_id']"
+        },
+        "fallbacks": [
+          {
+            "type": "role_and_text",
+            "role": "textbox",
+            "text": "Enter Member ID"
+          }
+        ],
+        "robustness_notes": "Uses name attribute which is stable in this legacy app"
+      },
+      "value": "{{member_id}}",
+      "url": null,
+      "wait_condition": null,
+      "extract_as": null,
+      "risk_level": "reversible",
+      "requires_confirmation": false,
+      "expected_errors": [],
+      "retry_on_failure": true,
+      "max_retries": 2
+    },
+    {
+      "step_number": 3,
+      "action_type": "click",
+      "description": "Click lookup button",
+      "locator": {
+        "locator_type": "text",
+        "primary": {
+          "type": "text",
+          "value": "Lookup Member"
+        },
+        "fallbacks": [
+          {
+            "type": "css_selector",
+            "value": "input[type='submit']"
+          },
+          {
+            "type": "role_and_text",
+            "role": "button",
+            "text": "Lookup Member"
+          }
+        ],
+        "robustness_notes": "Text-based locator is most reliable for this legacy app"
+      },
+      "value": null,
+      "url": null,
+      "wait_condition": {
+        "type": "element_visible",
+        "value": "table"
+      },
+      "extract_as": null,
+      "risk_level": "safe",
+      "requires_confirmation": false,
+      "expected_errors": [],
+      "retry_on_failure": false,
+      "max_retries": 0
+    },
+    {
+      "step_number": 4,
+      "action_type": "wait",
+      "description": "Wait for member details to load",
+      "locator": null,
+      "value": null,
+      "url": null,
+      "wait_condition": {
+        "type": "text_present",
+        "value": "Savings Balance"
+      },
+      "extract_as": null,
+      "risk_level": "safe",
+      "requires_confirmation": false,
+      "expected_errors": [],
+      "retry_on_failure": false,
+      "max_retries": 0
+    },
+    {
+      "step_number": 5,
+      "action_type": "extract",
+      "description": "Extract savings balance",
+      "locator": {
+        "locator_type": "css_selector",
+        "primary": {
+          "type": "text",
+          "value": "Savings Balance"
+        },
+        "fallbacks": [
+          {
+            "type": "css_selector",
+            "value": "td:contains('Savings Balance') + td"
+          }
+        ],
+        "robustness_notes": "Extracts from table cell following the label"
+      },
+      "value": null,
+      "url": null,
+      "wait_condition": null,
+      "extract_as": "balance",
+      "risk_level": "safe",
+      "requires_confirmation": false,
+      "expected_errors": [],
+      "retry_on_failure": false,
+      "max_retries": 0
+    }
+  ],
+  "checkpoints": [
+    {
+      "step_number": 1,
+      "condition": {
+        "type": "url_contains",
+        "value": "/lookup"
+      },
+      "description": "Verify navigation to lookup page",
+      "failure_outcome": null
+    },
+    {
+      "step_number": 3,
+      "condition": {
+        "type": "element_visible",
+        "value": "table"
+      },
+      "description": "Verify lookup results table is visible",
+      "failure_outcome": "member_not_found"
+    }
+  ],
+  "error_handlers": [
+    {
+      "error_pattern": "member not found|record not found",
+      "outcome_type": "business_outcome",
+      "outcome_value": "not_found",
+      "recovery_action": null
+    },
+    {
+      "error_pattern": "session expired|timeout",
+      "outcome_type": "recoverable",
+      "outcome_value": null,
+      "recovery_action": {
+        "action": "navigate",
+        "url": "/"
+      }
+    }
+  ],
+  "success_condition": {
+    "type": "step_completed",
+    "step_number": 5
+  },
+  "risk_level": "safe",
+  "allowlist_tags": ["member_lookup", "read_only"],
+  "discovered_by": "llm_agent",
+  "discovery_model": "gpt-4o",
+  "discovery_timestamp": "2024-08-30T12:01:30"
+}

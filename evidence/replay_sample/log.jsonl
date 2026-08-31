@@ -1,0 +1,9 @@
+{"timestamp": "2024-08-30T12:02:00", "level": "info", "step": null, "message": "Started replay session", "details": {"session_id": "replay_lookup_member_20240830_120200", "artifact_id": "lookup_member_balance", "parameters": {"member_id": "12345"}}}
+{"timestamp": "2024-08-30T12:02:01", "level": "info", "step": 1, "message": "Executing step 1: navigate", "details": {"description": "Navigate to member lookup page", "url": "/lookup"}}
+{"timestamp": "2024-08-30T12:02:03", "level": "info", "step": 1, "message": "Checkpoint: url_contains", "details": {"passed": true, "value": "/lookup"}}
+{"timestamp": "2024-08-30T12:02:04", "level": "info", "step": 2, "message": "Executing step 2: type", "details": {"description": "Enter member ID in lookup field", "value": "12345"}}
+{"timestamp": "2024-08-30T12:02:06", "level": "info", "step": 3, "message": "Executing step 3: click", "details": {"description": "Click lookup button"}}
+{"timestamp": "2024-08-30T12:02:08", "level": "info", "step": 3, "message": "Checkpoint: element_visible", "details": {"passed": true, "value": "table"}}
+{"timestamp": "2024-08-30T12:02:09", "level": "info", "step": 4, "message": "Executing step 4: wait", "details": {"description": "Wait for member details to load"}}
+{"timestamp": "2024-08-30T12:02:11", "level": "info", "step": 5, "message": "Executing step 5: extract", "details": {"description": "Extract savings balance", "extracted_value": "5432.10"}}
+{"timestamp": "2024-08-30T12:02:15", "level": "info", "step": null, "message": "Session finished with status: success", "details": {"steps_executed": 5, "execution_time_seconds": 15.2}}

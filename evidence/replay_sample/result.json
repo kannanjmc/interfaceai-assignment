@@ -1,0 +1,19 @@
+{
+  "artifact_id": "lookup_member_balance",
+  "execution_type": "replay",
+  "status": "success",
+  "outputs": {
+    "balance": 5432.10
+  },
+  "error_type": null,
+  "error_message": null,
+  "failed_step": null,
+  "expected": null,
+  "observed": null,
+  "business_outcome": null,
+  "steps_executed": 5,
+  "execution_time_seconds": 15.2,
+  "timestamp": "2024-08-30T12:02:15",
+  "required_human_handoff": false,
+  "handoff_reason": null
+}

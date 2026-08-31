@@ -1,0 +1,10 @@
+{
+  "session_id": "replay_lookup_member_20240830_120200",
+  "execution_type": "replay",
+  "started_at": "2024-08-30T12:02:00",
+  "status": "success",
+  "finished_at": "2024-08-30T12:02:15",
+  "execution_time_seconds": 15.2,
+  "steps_executed": 5,
+  "artifact_id": "lookup_member_balance"
+}

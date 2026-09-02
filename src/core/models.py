@@ -3,6 +3,12 @@ Core data models for the computer-use automation system.
 
 This module defines the artifact schema - the structured, typed, versioned
 representation of a reusable capability that can be invoked by AI agents.
+
+The artifact schema is the central data model that enables:
+- Discovery to capture learned flows as reusable capabilities
+- Replay to execute capabilities deterministically without LLM involvement
+- Multi-tenant reuse through parameterization and versioning
+- Reviewability by both human operators and AI agents
 """
 
 from datetime import datetime, timezone

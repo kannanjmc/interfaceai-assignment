@@ -1,7 +1,9 @@
 """
 Main entry point for the computer-use automation system.
 
-This module provides the CLI interface for running discovery and replay.
+This module provides the CLI interface for running discovery and replay,
+enabling automation of legacy applications through LLM-driven discovery
+and deterministic replay.
 """
 
 import asyncio
@@ -13,6 +15,7 @@ from typing import Optional
 import typer
 from rich.console import Console
 from rich.table import Table
+from rich.progress import Progress
 
 from .config import get_settings
 from .agent.discovery import DiscoveryAgent

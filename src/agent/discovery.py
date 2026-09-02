@@ -3,6 +3,16 @@ LLM-driven discovery agent.
 
 This module implements the observe → decide → act loop that uses an LLM
 to figure out how to accomplish a goal by driving a real application surface.
+
+The discovery agent is responsible for:
+- Observing the current application state
+- Deciding what action to take next based on the goal
+- Executing actions and handling their results
+- Recording successful runs as structured capability artifacts
+- Detecting when human intervention is needed
+
+This is the only component that uses the LLM. Production execution
+(replay) is deterministic and does not involve the LLM.
 """
 
 import json

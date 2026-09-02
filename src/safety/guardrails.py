@@ -3,6 +3,17 @@ Safety guardrails and policy enforcement.
 
 This module implements allowlist enforcement, risk assessment, and sensitive
 data redaction to ensure the automation system operates within safe boundaries.
+
+Security is critical for banking applications handling regulated financial data.
+This module provides:
+- Allowlist enforcement for domains, routes, and action types
+- Risk assessment for all actions (safe/reversible/risky/irreversible)
+- Automatic sensitive data redaction (SSN, credit cards, API keys, passwords)
+- Confirmation requirements for risky actions
+- Configurable safety policies per deployment
+
+All sensitive data is automatically redacted before being stored in logs,
+artifacts, or evidence to ensure compliance with financial regulations.
 """
 
 import re

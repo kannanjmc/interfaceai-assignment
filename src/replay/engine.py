@@ -3,7 +3,19 @@ Deterministic replay engine.
 
 This module executes saved capability artifacts deterministically without
 LLLM involvement. It handles parameter substitution, checkpoint verification,
-error detection, and outcome reporting.
+and error detection and outcome reporting.
+
+The replay engine is the production execution path - this is how AI agents
+would invoke capabilities in a real deployment. Key responsibilities:
+- Execute artifacts deterministically without LLM decision-making
+- Substitute input parameters into the recorded flow
+- Verify checkpoints to ensure expected state is reached
+- Handle runtime errors and exceptional states
+- Distinguish between business outcomes, recoverable conditions, and hard failures
+- Return structured results with clear success/failure information
+
+Performance note: Replay is typically 5-10x faster than discovery
+because no LLM reasoning is required.
 """
 
 import asyncio

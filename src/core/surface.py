@@ -6,6 +6,11 @@ This module defines the interface for interacting with different application sur
 schema and replay logic should be surface-agnostic - they operate on a unified
 abstraction of "observe state" and "perform action" regardless of the underlying
 technology.
+
+This abstraction enables:
+- Same artifacts to work across web, legacy web, and desktop applications
+- Easy extension to new surface types without changing core logic
+- Consistent error handling and state management across surfaces
 """
 
 from abc import ABC, abstractmethod

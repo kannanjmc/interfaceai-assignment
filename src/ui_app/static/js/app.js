@@ -10,9 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Meeting Assistant UI loaded');
 
     // State
-    let isRecording = true;
+    let isRecording = false;
     let transcriptCount = 0;
     let sampleIndex = 0;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let audioStream = null;
 
     // 50 AI summary options
     const ALL_OPTIONS = [
@@ -443,23 +446,90 @@ document.addEventListener('DOMContentLoaded', function() {
         closeFloatingOptions();
     });
 
+    function stopAudioRecording() {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+        if (audioStream) {
+            audioStream.getTracks().forEach(function(track) { track.stop(); });
+            audioStream = null;
+        }
+        isRecording = false;
+        updateRecordingStatus(false);
+        stopAutoSummary();
+    }
+
+    function startAudioRecording() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showToast('Audio recording not supported in this browser');
+            return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                audioStream = stream;
+
+                try {
+                    mediaRecorder = new MediaRecorder(stream);
+                } catch (e) {
+                    showToast('MediaRecorder not supported');
+                    return;
+                }
+
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = function() {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+
+                    addToTranscript('System', 'Audio recording saved (' + (audioBlob.size / 1024).toFixed(1) + ' KB)', 'Just now');
+
+                    // Optional download link
+                    const link = document.createElement('a');
+                    link.href = audioUrl;
+                    link.download = 'meeting-recording-' + Date.now() + '.webm';
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    // Do not auto-click; user can download if needed
+                };
+
+                mediaRecorder.onerror = function(e) {
+                    console.error('MediaRecorder error:', e);
+                    showToast('Recording error');
+                    stopAudioRecording();
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                updateRecordingStatus(true);
+                startAutoSummary();
+                showToast('Recording started');
+            })
+            .catch(function(err) {
+                console.error('Microphone permission denied:', err);
+                showToast('Microphone permission denied');
+            });
+    }
+
     // Recording toggle
     if (recordBtn) {
         console.log('recordBtn found and listener attached');
         recordBtn.addEventListener('click', function() {
             console.log('recordBtn clicked');
-            isRecording = !isRecording;
 
             if (isRecording) {
-                this.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
-                updateRecordingStatus(true);
-                startAutoSummary();
-                showToast('Recording resumed');
+                stopAudioRecording();
+                this.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4" fill="currentColor"></circle></svg>';
+                showToast('Recording stopped');
             } else {
-                this.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
-                updateRecordingStatus(false);
-                stopAutoSummary();
-                showToast('Recording paused');
+                this.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
+                startAudioRecording();
             }
         });
     }
@@ -681,13 +751,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initialize
+    updateRecordingStatus(false);
+    if (recordBtn) {
+        recordBtn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4" fill="currentColor"></circle></svg>';
+    }
+
     renderFloatingOptions();
     renderSettingsOptions();
     renderChips();
-
-    if (isRecording) {
-        startAutoSummary();
-    }
 
     const firstChip = document.querySelector('.option-chip');
     if (firstChip && summaryTitle && summaryText) {

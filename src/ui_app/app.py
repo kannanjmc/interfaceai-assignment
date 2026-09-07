@@ -49,18 +49,20 @@ def build_prompt(option, transcript='', previous=''):
     """Build a prompt for the requested summary option."""
     label = option.replace('_', ' ').replace('-', ' ').title()
 
+    # Strip HTML from previous summary so the prompt stays plain text
+    previous_plain = re.sub(r'<[^>]+>', '', previous)
+
     if transcript:
         parts = []
         if previous:
-            parts.append(f'Here is the previous {label} summary:\n\n{previous}\n\n')
+            parts.append(f'Here is the previous {label} summary:\n\n{previous_plain}\n\n')
         parts.append(f'Here is the new meeting transcript:\n\n{transcript}\n\n')
         parts.append(
             f'You are a meeting assistant. Generate an updated, concise meeting {label} that combines '
             f'the previous summary with the new transcript. '
-            f'Return the result as a short HTML snippet using only <strong> and <br> tags '
-            f'and bullet points (•). Keep it under 8 lines. Do not include markdown code blocks. '
-            f'Even if the transcript is short, do your best to extract useful points. '
-            f'Output only the HTML, no explanation.'
+            f'Return the result as plain text using bullet points (•) and line breaks. '
+            f'Do not use any HTML tags. Keep it under 8 lines. '
+            f'Even if the transcript is short, do your best to extract useful points.'
         )
         return '\n'.join(parts)
 
@@ -68,8 +70,8 @@ def build_prompt(option, transcript='', previous=''):
         f'You are a meeting assistant. Generate a concise meeting {label} '
         f'for a weekly sync that covered Q4 roadmap, migration project progress, '
         f'testing allocation, and a follow-up meeting on Friday. '
-        f'Return the result as a short HTML snippet using only <strong> and <br> tags '
-        f'and bullet points (•). Keep it under 6 lines. Do not include markdown code blocks.'
+        f'Return the result as plain text using bullet points (•) and line breaks. '
+        f'Do not use any HTML tags. Keep it under 6 lines.'
     )
 
 
@@ -78,19 +80,20 @@ def generate_summary_content(option, transcript='', previous=''):
     if not transcript or not transcript.strip():
         return {
             'title': 'AI ' + option.replace('_', ' ').replace('-', ' ').title(),
-            'text': '<strong>No transcript yet</strong><br>Start recording and speak to generate a real summary.'
+            'text': 'No transcript yet\nStart recording and speak to generate a real summary.'
         }
 
     prompt = build_prompt(option, transcript, previous)
     response = call_ollama(prompt)
 
-    # Clean up common prompt failures and unbalanced HTML
+    # Clean up common prompt failures and stray HTML
     response = response.replace('Not enough content to summarize.', '').strip()
-    response = re.sub(r'</?strong>', '', response, flags=re.IGNORECASE)
-    response = response.strip().replace('\n', '<br>')
+    response = re.sub(r'<[^>]+>', '', response)
+    response = response.strip()
 
     label = option.replace('_', ' ').replace('-', ' ').title()
-    response = f'<strong>{label}</strong><br>{response}'
+    if not response.startswith(label):
+        response = f'{label}\n{response}'
 
     return {
         'title': 'AI ' + label,

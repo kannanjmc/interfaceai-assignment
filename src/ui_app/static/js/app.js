@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
         history.slice(1).forEach(function(item, index) {
             const entry = document.createElement('div');
             entry.className = 'summary-history-item';
-            entry.innerHTML = item.text;
+            entry.textContent = item.text;
             entry.style.display = index === 0 ? '' : 'none';
 
             if (index === 0) {
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function displaySummary(data) {
         if (summaryTitle && summaryText) {
             summaryTitle.textContent = data.title;
-            summaryText.innerHTML = data.text;
+            summaryText.textContent = data.text;
             summaryText.style.color = 'var(--text-primary)';
         }
 

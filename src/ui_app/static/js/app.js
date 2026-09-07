@@ -217,11 +217,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function fetchSummaryFromService(key, callback) {
         console.log('fetching /api/summary with option:', key);
         const transcript = getTranscriptText();
+        const previous = getCachedSummary(key);
+        const previousText = previous ? previous.text : '';
 
         fetch('/api/summary', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ option: key, transcript: transcript })
+            body: JSON.stringify({
+                option: key,
+                transcript: transcript,
+                previous: previousText
+            })
         })
             .then(function(response) {
                 console.log('fetch response:', response.status);

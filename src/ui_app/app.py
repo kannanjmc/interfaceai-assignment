@@ -44,20 +44,24 @@ def call_ollama(prompt, model=OLLAMA_MODEL):
         return f'<strong>Could not reach Ollama</strong><br>{str(e)}'
 
 
-def build_prompt(option, transcript=''):
+def build_prompt(option, transcript='', previous=''):
     """Build a prompt for the requested summary option."""
     label = option.replace('_', ' ').replace('-', ' ').title()
 
     if transcript:
-        return (
-            f'You are a meeting assistant. Here is a meeting transcript:\n\n'
-            f'{transcript}\n\n'
-            f'Generate a concise meeting {label} from this transcript. '
+        parts = []
+        if previous:
+            parts.append(f'Here is the previous {label} summary:\n\n{previous}\n\n')
+        parts.append(f'Here is the new meeting transcript:\n\n{transcript}\n\n')
+        parts.append(
+            f'You are a meeting assistant. Generate an updated, concise meeting {label} that combines '
+            f'the previous summary with the new transcript. '
             f'Return the result as a short HTML snippet using only <strong> and <br> tags '
             f'and bullet points (•). Keep it under 8 lines. Do not include markdown code blocks. '
             f'Even if the transcript is short, do your best to extract useful points. '
             f'Output only the HTML, no explanation.'
         )
+        return '\n'.join(parts)
 
     return (
         f'You are a meeting assistant. Generate a concise meeting {label} '
@@ -68,7 +72,7 @@ def build_prompt(option, transcript=''):
     )
 
 
-def generate_summary_content(option, transcript=''):
+def generate_summary_content(option, transcript='', previous=''):
     """Generate an AI summary using local Ollama."""
     if not transcript or not transcript.strip():
         return {
@@ -76,7 +80,7 @@ def generate_summary_content(option, transcript=''):
             'text': '<strong>No transcript yet</strong><br>Start recording and speak to generate a real summary.'
         }
 
-    prompt = build_prompt(option, transcript)
+    prompt = build_prompt(option, transcript, previous)
     response = call_ollama(prompt)
 
     # Strip stray plain text and fallback sentences
@@ -131,11 +135,13 @@ def api_summary():
         data = request.get_json(silent=True) or {}
         option = data.get('option', 'summary')
         transcript = data.get('transcript', '')
+        previous = data.get('previous', '')
     else:
         option = request.args.get('option', 'summary')
         transcript = request.args.get('transcript', '')
+        previous = request.args.get('previous', '')
 
-    content = generate_summary_content(option, transcript)
+    content = generate_summary_content(option, transcript, previous)
     return jsonify({
         'option': option,
         'title': content['title'],

@@ -89,14 +89,160 @@
                     </div>
                 </div>
             </div>
-            {% else %}
-            <!-- Placeholder for other tabs -->
-            <div class="placeholder-view">
-                <div class="placeholder-icon">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
+            {% elif active_tab == 'home' %}
+            <!-- Home Screen -->
+            <div class="view-header">
+                <h2>Welcome back</h2>
+                <p>You have 3 meetings today</p>
+            </div>
+            <div class="card-grid">
+                <div class="stat-card">
+                    <span class="stat-value">12</span>
+                    <span class="stat-label">This week</span>
                 </div>
-                <h2 class="placeholder-title">{{ active_tab.title() }}</h2>
-                <p class="placeholder-text">This section is under development. Check back soon for updates.</p>
+                <div class="stat-card">
+                    <span class="stat-value">4</span>
+                    <span class="stat-label">Upcoming</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">85%</span>
+                    <span class="stat-label">AI match</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">2h</span>
+                    <span class="stat-label">Recorded</span>
+                </div>
+            </div>
+            <div class="section-card">
+                <h3>Recent Meetings</h3>
+                <div class="meeting-list">
+                    <div class="meeting-row">
+                        <span class="meeting-title">Product Sync</span>
+                        <span class="meeting-time">Today, 10:00 AM</span>
+                    </div>
+                    <div class="meeting-row">
+                        <span class="meeting-title">Engineering Review</span>
+                        <span class="meeting-time">Yesterday, 2:00 PM</span>
+                    </div>
+                    <div class="meeting-row">
+                        <span class="meeting-title">Client Call</span>
+                        <span class="meeting-time">Mon, 11:00 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            {% elif active_tab == 'activity' %}
+            <!-- Activity Screen -->
+            <div class="view-header">
+                <h2>Activity</h2>
+                <p>Your recent actions</p>
+            </div>
+            <div class="section-card">
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-dot blue"></div>
+                        <div class="activity-content">
+                            <span class="activity-text">Generated AI summary for Product Sync</span>
+                            <span class="activity-time">10 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot green"></div>
+                        <div class="activity-content">
+                            <span class="activity-text">Uploaded meeting transcript</span>
+                            <span class="activity-time">1 hour ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot orange"></div>
+                        <div class="activity-content">
+                            <span class="activity-text">Shared meeting notes with team</span>
+                            <span class="activity-time">3 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot purple"></div>
+                        <div class="activity-content">
+                            <span class="activity-text">Started recording Client Call</span>
+                            <span class="activity-time">Yesterday</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% elif active_tab == 'profile' %}
+            <!-- Profile Screen -->
+            <div class="profile-view">
+                <div class="profile-avatar">
+                    <span>JD</span>
+                </div>
+                <h2 class="profile-name">Jane Doe</h2>
+                <p class="profile-role">Product Manager</p>
+
+                <div class="section-card">
+                    <h3>Account</h3>
+                    <div class="profile-row">
+                        <span class="profile-label">Email</span>
+                        <span class="profile-value">jane.doe@company.com</span>
+                    </div>
+                    <div class="profile-row">
+                        <span class="profile-label">Plan</span>
+                        <span class="profile-value">Pro</span>
+                    </div>
+                    <div class="profile-row">
+                        <span class="profile-label">Storage</span>
+                        <span class="profile-value">45% used</span>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>Stats</h3>
+                    <div class="profile-row">
+                        <span class="profile-label">Meetings</span>
+                        <span class="profile-value">128</span>
+                    </div>
+                    <div class="profile-row">
+                        <span class="profile-label">Summaries</span>
+                        <span class="profile-value">86</span>
+                    </div>
+                </div>
+            </div>
+
+            {% elif active_tab == 'settings' %}
+            <!-- Settings Screen -->
+            <div class="view-header">
+                <h2>Settings</h2>
+                <p>Customize your experience</p>
+            </div>
+            <div class="section-card">
+                <h3>Preferences</h3>
+                <div class="setting-row">
+                    <span class="setting-label">Auto-record meetings</span>
+                    <div class="toggle active"></div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">AI summaries</span>
+                    <div class="toggle active"></div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Email notifications</span>
+                    <div class="toggle"></div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Dark mode</span>
+                    <div class="toggle"></div>
+                </div>
+            </div>
+            <div class="section-card">
+                <h3>About</h3>
+                <div class="setting-row">
+                    <span class="setting-label">Version</span>
+                    <span class="setting-value">1.0.0</span>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Help & Support</span>
+                    <span class="setting-value">></span>
+                </div>
             </div>
             {% endif %}
         </main>

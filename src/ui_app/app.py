@@ -44,9 +44,19 @@ def call_ollama(prompt, model=OLLAMA_MODEL):
         return f'<strong>Could not reach Ollama</strong><br>{str(e)}'
 
 
-def build_prompt(option):
+def build_prompt(option, transcript=''):
     """Build a prompt for the requested summary option."""
     label = option.replace('_', ' ').replace('-', ' ').title()
+
+    if transcript:
+        return (
+            f'You are a meeting assistant. Here is a meeting transcript:\n\n'
+            f'{transcript}\n\n'
+            f'Generate a concise meeting {label} from this transcript. '
+            f'Return the result as a short HTML snippet using only <strong> and <br> tags '
+            f'and bullet points (•). Keep it under 8 lines. Do not include markdown code blocks. '
+            f'If the transcript is short or empty, say "Not enough content to summarize."'
+        )
 
     return (
         f'You are a meeting assistant. Generate a concise meeting {label} '
@@ -57,9 +67,9 @@ def build_prompt(option):
     )
 
 
-def generate_summary_content(option):
+def generate_summary_content(option, transcript=''):
     """Generate an AI summary using local Ollama."""
-    prompt = build_prompt(option)
+    prompt = build_prompt(option, transcript)
     response = call_ollama(prompt)
 
     return {
@@ -104,11 +114,18 @@ def settings():
     return render_template('index.html', active_tab='settings')
 
 
-@app.route('/api/summary')
+@app.route('/api/summary', methods=['GET', 'POST'])
 def api_summary():
     """Return AI-generated summary content for the requested option."""
-    option = request.args.get('option', 'summary')
-    content = generate_summary_content(option)
+    if request.method == 'POST':
+        data = request.get_json(silent=True) or {}
+        option = data.get('option', 'summary')
+        transcript = data.get('transcript', '')
+    else:
+        option = request.args.get('option', 'summary')
+        transcript = request.args.get('transcript', '')
+
+    content = generate_summary_content(option, transcript)
     return jsonify({
         'option': option,
         'title': content['title'],

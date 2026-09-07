@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let mediaRecorder = null;
     let audioChunks = [];
     let audioStream = null;
+    let speechRecognition = null;
 
     // 50 AI summary options
     const ALL_OPTIONS = [
@@ -191,9 +192,21 @@ document.addEventListener('DOMContentLoaded', function() {
         return cache[key] || null;
     }
 
+    function getTranscriptText() {
+        if (!transcriptList) return '';
+        const items = transcriptList.querySelectorAll('.transcript-text');
+        return Array.from(items).map(function(el) { return el.textContent; }).join(' ');
+    }
+
     function fetchSummaryFromService(key, callback) {
-        console.log('fetching /api/summary?option=' + encodeURIComponent(key));
-        fetch('/api/summary?option=' + encodeURIComponent(key))
+        console.log('fetching /api/summary with option:', key);
+        const transcript = getTranscriptText();
+
+        fetch('/api/summary', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ option: key, transcript: transcript })
+        })
             .then(function(response) {
                 console.log('fetch response:', response.status);
                 if (!response.ok) {
@@ -446,7 +459,54 @@ document.addEventListener('DOMContentLoaded', function() {
         closeFloatingOptions();
     });
 
+    function startSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            console.log('Web Speech API not supported');
+            return;
+        }
+
+        speechRecognition = new SpeechRecognition();
+        speechRecognition.continuous = true;
+        speechRecognition.interimResults = false;
+        speechRecognition.lang = 'en-US';
+
+        speechRecognition.onresult = function(event) {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const result = event.results[i];
+                if (result.isFinal) {
+                    const text = result[0].transcript;
+                    addToTranscript('Speaker', text, new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+                }
+            }
+        };
+
+        speechRecognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+        };
+
+        speechRecognition.onend = function() {
+            if (isRecording && speechRecognition) {
+                speechRecognition.start();
+            }
+        };
+
+        try {
+            speechRecognition.start();
+        } catch (e) {
+            console.error('Could not start speech recognition:', e);
+        }
+    }
+
+    function stopSpeechRecognition() {
+        if (speechRecognition) {
+            speechRecognition.stop();
+            speechRecognition = null;
+        }
+    }
+
     function stopAudioRecording() {
+        stopSpeechRecognition();
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
             mediaRecorder.stop();
         }
@@ -506,6 +566,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 mediaRecorder.start();
+                startSpeechRecognition();
                 isRecording = true;
                 updateRecordingStatus(true);
                 startAutoSummary();

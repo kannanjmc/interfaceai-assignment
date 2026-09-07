@@ -282,12 +282,13 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchSummaryFromService(key, function(err, data) {
             console.log('fetch callback:', err, data);
             if (err) {
+                console.error('Summary load error:', err);
                 if (summaryText) {
-                    summaryText.textContent = 'Failed to load. Please try again.';
+                    summaryText.textContent = 'Failed to load. Please try again.\nError: ' + (err.message || 'unknown');
                     summaryText.style.color = 'var(--danger)';
                 }
                 setCacheIcon(false);
-                showToast('Service error');
+                showToast('Service error: ' + (err.message || 'unknown'));
                 return;
             }
             displaySummary(data);
@@ -327,10 +328,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displaySummary(data) {
+        console.log('displaySummary called with:', data);
         if (summaryTitle && summaryText) {
             summaryTitle.textContent = data.title;
             summaryText.textContent = data.text;
             summaryText.style.color = 'var(--text-primary)';
+        }
+
+        if (summaryContent) {
+            summaryContent.classList.remove('collapsed');
+            summaryContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         const activeChip = document.querySelector('.option-chip.active');

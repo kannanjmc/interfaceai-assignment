@@ -57,13 +57,23 @@ def build_prompt(option, transcript='', previous=''):
         if previous:
             parts.append(f'Here is the previous {label} summary:\n\n{previous_plain}\n\n')
         parts.append(f'Here is the new meeting transcript:\n\n{transcript}\n\n')
-        parts.append(
-            f'You are a meeting assistant. Generate an updated, concise meeting {label} that combines '
-            f'the previous summary with the new transcript. '
-            f'Return the result as plain text using bullet points (•) and line breaks. '
-            f'Do not use any HTML tags. Keep it under 8 lines. '
-            f'Even if the transcript is short, do your best to extract useful points.'
-        )
+        if previous_plain.strip():
+            parts.append(
+                f'You are a meeting assistant. Generate an updated, concise meeting {label} that combines '
+                f'the previous summary with the new transcript. '
+                f'Return the result as plain text using bullet points (•) and line breaks. '
+                f'Do not use any HTML tags. Keep it under 8 lines. '
+                f'Even if the transcript is short, do your best to extract useful points. '
+                f'Do not ask for more information. Do not say you cannot do it. Just provide the summary.'
+            )
+        else:
+            parts.append(
+                f'You are a meeting assistant. Generate a concise meeting {label} from the transcript. '
+                f'Return the result as plain text using bullet points (•) and line breaks. '
+                f'Do not use any HTML tags. Keep it under 8 lines. '
+                f'Even if the transcript is short, do your best to extract useful points. '
+                f'Do not ask for more information. Do not say you cannot do it. Just provide the summary.'
+            )
         return '\n'.join(parts)
 
     return (
@@ -86,10 +96,26 @@ def generate_summary_content(option, transcript='', previous=''):
     prompt = build_prompt(option, transcript, previous)
     response = call_ollama(prompt)
 
-    # Clean up common prompt failures and stray HTML
+    # Clean up common prompt failures, meta responses, and stray HTML
     response = response.replace('Not enough content to summarize.', '').strip()
     response = re.sub(r'<[^>]+>', '', response)
     response = response.strip()
+
+    # Remove meta responses where Ollama asks for more info or complains
+    meta_phrases = [
+        r"I don't see a previous.*?(?:\.|\n)",
+        r"Previous meeting summary not provided.*?(?:\.|\n)",
+        r"Please provide it.*?(?:\.|\n)",
+        r"Please share.*?(?:\.|\n)",
+        r"I can help.*?(?:\.|\n)",
+        r"If you have any questions.*?(?:\.|\n)",
+        r"Let me know.*?(?:\.|\n)",
+    ]
+    for pattern in meta_phrases:
+        response = re.sub(pattern, '', response, flags=re.IGNORECASE).strip()
+
+    if not response or not response.strip('•').strip():
+        response = 'No usable summary could be generated.\n• Try speaking more clearly\n• Check that the transcript captured your voice'
 
     label = option.replace('_', ' ').replace('-', ' ').title()
     if not response.startswith(label):

@@ -96,9 +96,10 @@ def generate_summary_content(option, transcript='', previous=''):
     prompt = build_prompt(option, transcript, previous)
     response = call_ollama(prompt)
 
-    # Clean up common prompt failures, meta responses, and stray HTML
+    # Clean up common prompt failures, meta responses, stray HTML and special chars
     response = response.replace('Not enough content to summarize.', '').strip()
     response = re.sub(r'<[^>]+>', '', response)
+    response = response.replace('\u2022', '-')
     response = response.strip()
 
     # Remove meta responses where Ollama asks for more info or complains

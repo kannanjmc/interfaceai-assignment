@@ -575,6 +575,7 @@ document.addEventListener('DOMContentLoaded', function() {
             audioStream = null;
         }
         isRecording = false;
+        if (recordBtn) recordBtn.classList.remove('recording');
         updateRecordingStatus(false);
         stopAutoSummary();
     }
@@ -628,6 +629,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 mediaRecorder.start();
                 startSpeechRecognition();
                 isRecording = true;
+                if (recordBtn) recordBtn.classList.add('recording');
                 updateRecordingStatus(true);
                 startAutoSummary();
                 showToast('Recording started');

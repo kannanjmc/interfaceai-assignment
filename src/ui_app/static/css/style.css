@@ -359,15 +359,22 @@ html, body {
     height: 28px;
     border: none;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    background: linear-gradient(135deg, #1dd1a1, #10ac84);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(238, 90, 111, 0.35);
+    box-shadow: 0 2px 4px rgba(29, 209, 161, 0.35);
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0;
+    transition: background 0.2s ease;
+}
+
+.record-btn.recording {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    box-shadow: 0 2px 4px rgba(238, 90, 111, 0.35);
+    animation: pulse 1.5s infinite;
 }
 
 .record-btn:active {

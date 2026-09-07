@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 this.classList.add('active');
 
-                loadSummaryContent(opt.key, false);
+                loadSummaryContent(opt.key, true);
             });
 
             summaryOptions.appendChild(chip);

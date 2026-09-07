@@ -29,9 +29,126 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Settings toggles
     const toggles = document.querySelectorAll('.toggle');
+    const aiOptionToggles = document.querySelectorAll('.toggle[data-ai-option]');
 
     // Activity items
     const activityItems = document.querySelectorAll('.activity-item');
+
+    // AI Summary Options localStorage helpers
+    const AI_OPTIONS_KEY = 'aiSummaryOptions';
+    const DEFAULT_AI_OPTIONS = ['summary', 'qa'];
+
+    function getAiSummaryOptions() {
+        try {
+            const saved = localStorage.getItem(AI_OPTIONS_KEY);
+            if (saved) {
+                return JSON.parse(saved);
+            }
+        } catch (e) {
+            console.error('Error reading AI options:', e);
+        }
+        return DEFAULT_AI_OPTIONS;
+    }
+
+    function setAiSummaryOptions(options) {
+        try {
+            localStorage.setItem(AI_OPTIONS_KEY, JSON.stringify(options));
+        } catch (e) {
+            console.error('Error saving AI options:', e);
+        }
+    }
+
+    function isAiOptionEnabled(option) {
+        return getAiSummaryOptions().includes(option);
+    }
+
+    function updateOptionChipsVisibility() {
+        if (!optionChips.length) return;
+
+        let firstVisible = null;
+        let hasActive = false;
+
+        optionChips.forEach(function(chip) {
+            const option = chip.getAttribute('data-option');
+            const enabled = isAiOptionEnabled(option);
+
+            if (enabled) {
+                chip.style.display = '';
+                if (!firstVisible) {
+                    firstVisible = chip;
+                }
+                if (chip.classList.contains('active')) {
+                    hasActive = true;
+                }
+            } else {
+                chip.style.display = 'none';
+                chip.classList.remove('active');
+            }
+        });
+
+        // Ensure at least one visible chip is active
+        if (firstVisible && !hasActive) {
+            optionChips.forEach(function(c) { c.classList.remove('active'); });
+            firstVisible.classList.add('active');
+
+            // Also reset summary text to default if title/text exist
+            if (summaryTitle && summaryText) {
+                const option = firstVisible.getAttribute('data-option');
+                if (summaryData[option]) {
+                    summaryTitle.textContent = summaryData[option].title;
+                    summaryText.textContent = 'Tap Think to generate the ' + summaryData[option].title + '.';
+                }
+            }
+        }
+    }
+
+    function initAiOptionToggles() {
+        const enabledOptions = getAiSummaryOptions();
+
+        aiOptionToggles.forEach(function(toggle) {
+            const option = toggle.getAttribute('data-ai-option');
+            const enabled = enabledOptions.includes(option);
+            toggle.classList.toggle('active', enabled);
+
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const isActive = this.classList.contains('active');
+                const currentOptions = getAiSummaryOptions();
+                const option = this.getAttribute('data-ai-option');
+
+                if (isActive) {
+                    if (!currentOptions.includes(option)) {
+                        currentOptions.push(option);
+                    }
+                } else {
+                    if (currentOptions.length > 1) {
+                        const index = currentOptions.indexOf(option);
+                        if (index > -1) {
+                            currentOptions.splice(index, 1);
+                        }
+                    } else {
+                        // Keep at least one option enabled
+                        this.classList.add('active');
+                        showToast('At least one AI summary option is required');
+                        return;
+                    }
+                }
+
+                setAiSummaryOptions(currentOptions);
+                showToast('AI summary options updated');
+            });
+        });
+    }
+
+    // Initialize settings AI option toggles
+    if (aiOptionToggles.length) {
+        initAiOptionToggles();
+    }
+
+    // Initialize meeting page option chips
+    if (optionChips.length) {
+        updateOptionChipsVisibility();
+    }
 
     // Recording toggle
     if (recordBtn) {
@@ -244,8 +361,11 @@ document.addEventListener('DOMContentLoaded', function() {
         scheduleNextTranscript();
     }, 2000);
 
-    // Settings toggles
+    // Settings toggles (non-AI)
     toggles.forEach(function(toggle) {
+        if (toggle.hasAttribute('data-ai-option')) {
+            return;
+        }
         toggle.addEventListener('click', function() {
             this.classList.toggle('active');
         });

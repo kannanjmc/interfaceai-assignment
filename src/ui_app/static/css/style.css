@@ -815,6 +815,19 @@ html, body {
     font-weight: 700;
 }
 
+.setting-select {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+    max-width: 150px;
+}
+
 .toggle {
     width: 42px;
     height: 22px;

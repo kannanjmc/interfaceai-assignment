@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Settings
     const aiOptionsList = document.getElementById('aiOptionsList');
+    const autoSummaryInterval = document.getElementById('autoSummaryInterval');
 
     // Settings toggles
     const toggles = document.querySelectorAll('.toggle');
@@ -101,7 +102,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const AI_OPTIONS_KEY = 'aiSummaryOptions';
     const AI_CACHE_KEY = 'aiSummaryCache';
+    const AUTO_INTERVAL_KEY = 'autoSummaryInterval';
     const DEFAULT_AI_OPTIONS = ['summary', 'qa'];
+    let autoSummaryTimer = null;
 
     function getAiSummaryOptions() {
         try {
@@ -127,6 +130,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (e) {}
         return {};
+    }
+
+    function getAutoSummaryInterval() {
+        try {
+            const saved = localStorage.getItem(AUTO_INTERVAL_KEY);
+            if (saved) {
+                return parseInt(saved, 10);
+            }
+        } catch (e) {}
+        return 0;
+    }
+
+    function setAutoSummaryInterval(seconds) {
+        try {
+            localStorage.setItem(AUTO_INTERVAL_KEY, String(seconds));
+        } catch (e) {}
+    }
+
+    function startAutoSummary() {
+        stopAutoSummary();
+        const seconds = getAutoSummaryInterval();
+        if (seconds > 0 && isRecording) {
+            autoSummaryTimer = setInterval(function() {
+                const activeChip = document.querySelector('.option-chip.active');
+                const key = activeChip ? activeChip.getAttribute('data-option') : 'summary';
+                if (activeChip && summaryContent) {
+                    summaryContent.classList.remove('collapsed');
+                }
+                loadSummaryContent(key, true);
+            }, seconds * 1000);
+        }
+    }
+
+    function stopAutoSummary() {
+        if (autoSummaryTimer) {
+            clearInterval(autoSummaryTimer);
+            autoSummaryTimer = null;
+        }
     }
 
     function setSummaryCache(key, data) {
@@ -412,10 +453,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isRecording) {
                 this.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
                 updateRecordingStatus(true);
+                startAutoSummary();
                 showToast('Recording resumed');
             } else {
                 this.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
                 updateRecordingStatus(false);
+                stopAutoSummary();
                 showToast('Recording paused');
             }
         });
@@ -625,10 +668,26 @@ document.addEventListener('DOMContentLoaded', function() {
         return div.innerHTML;
     }
 
+    // Auto-summarize interval select
+    if (autoSummaryInterval) {
+        autoSummaryInterval.value = String(getAutoSummaryInterval());
+        autoSummaryInterval.addEventListener('change', function() {
+            const seconds = parseInt(this.value, 10);
+            setAutoSummaryInterval(seconds);
+            if (isRecording) {
+                startAutoSummary();
+            }
+        });
+    }
+
     // Initialize
     renderFloatingOptions();
     renderSettingsOptions();
     renderChips();
+
+    if (isRecording) {
+        startAutoSummary();
+    }
 
     const firstChip = document.querySelector('.option-chip');
     if (firstChip && summaryTitle && summaryText) {

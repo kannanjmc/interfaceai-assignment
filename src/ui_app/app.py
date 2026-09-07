@@ -104,13 +104,16 @@ def generate_summary_content(option, transcript='', previous=''):
 
     # Remove meta responses where Ollama asks for more info or complains
     meta_phrases = [
+        r"I'm ready to assist.*?(?:\.|\n)",
         r"I don't see a previous.*?(?:\.|\n)",
+        r"I don't see a transcript.*?(?:\.|\n)",
         r"Previous meeting summary not provided.*?(?:\.|\n)",
         r"Please provide it.*?(?:\.|\n)",
         r"Please share.*?(?:\.|\n)",
         r"I can help.*?(?:\.|\n)",
         r"If you have any questions.*?(?:\.|\n)",
         r"Let me know.*?(?:\.|\n)",
+        r"However,.*?(?:\.|\n)",
     ]
     for pattern in meta_phrases:
         response = re.sub(pattern, '', response, flags=re.IGNORECASE).strip()

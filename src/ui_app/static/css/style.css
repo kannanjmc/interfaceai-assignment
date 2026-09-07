@@ -360,24 +360,25 @@ html, body {
 
 .action-btn {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 1px;
-    padding: 5px 8px;
+    gap: 5px;
+    padding: 5px 10px;
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.35));
     color: var(--text-primary);
-    font-size: 9px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     cursor: pointer;
-    min-width: 42px;
+    min-width: 56px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 6px rgba(31, 38, 135, 0.08);
+    transition: all 0.15s ease;
 }
 
 .action-btn:active {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.85);
     transform: scale(0.96);
 }
 
@@ -387,8 +388,22 @@ html, body {
     color: var(--text-secondary);
 }
 
+.think-btn {
+    background: linear-gradient(135deg, var(--accent), #7c4dff);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
 .think-btn .icon {
-    color: var(--accent);
+    color: white;
+}
+
+.think-btn:active {
+    background: linear-gradient(135deg, #4e1ebd, var(--accent));
+}
+
+.upload-btn {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.45));
 }
 
 /* Summary and Transcript Sections */

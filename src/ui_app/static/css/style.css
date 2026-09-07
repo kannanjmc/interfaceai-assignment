@@ -150,8 +150,8 @@ html, body {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    padding: 14px;
-    margin-bottom: 14px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
@@ -160,22 +160,22 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .recording-status {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .recording-dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     background: var(--danger);
     border-radius: 50%;
     animation: pulse 1.5s infinite;
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+    box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
 }
 
 @keyframes pulse {
@@ -184,7 +184,7 @@ html, body {
 }
 
 .recording-text {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--danger);
 }
@@ -192,12 +192,12 @@ html, body {
 .end-session {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 7px 12px;
+    gap: 4px;
+    padding: 5px 9px;
     background: rgba(255, 255, 255, 0.4);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-pill);
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--danger);
     cursor: pointer;
@@ -213,12 +213,12 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: 12px;
 }
 
 .record-btn {
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
     border: none;
     border-radius: 50%;
     background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
@@ -227,7 +227,7 @@ html, body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(238, 90, 111, 0.35);
+    box-shadow: 0 3px 10px rgba(238, 90, 111, 0.35);
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0;
 }
@@ -237,24 +237,24 @@ html, body {
 }
 
 .record-btn .icon {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
 }
 
 .action-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 9px 16px;
+    gap: 2px;
+    padding: 7px 12px;
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-sm);
     background: rgba(255, 255, 255, 0.4);
     color: var(--text-primary);
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
     cursor: pointer;
-    min-width: 68px;
+    min-width: 54px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
@@ -265,8 +265,8 @@ html, body {
 }
 
 .action-btn .icon {
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
     color: var(--text-secondary);
 }
 

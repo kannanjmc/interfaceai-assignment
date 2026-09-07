@@ -2,6 +2,10 @@
  * Meeting Assistant Mobile UI - Interactive Logic
  */
 
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error('JS Error:', message, 'line:', lineno, 'col:', colno, error);
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Meeting Assistant UI loaded');
 
@@ -144,18 +148,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function fetchSummaryFromService(key, callback) {
+        console.log('fetching /api/summary/' + encodeURIComponent(key));
         fetch('/api/summary/' + encodeURIComponent(key))
             .then(function(response) {
+                console.log('fetch response:', response.status);
                 if (!response.ok) {
                     throw new Error('Service error');
                 }
                 return response.json();
             })
             .then(function(data) {
+                console.log('fetch data:', data);
                 setSummaryCache(key, data);
                 callback(null, data);
             })
             .catch(function(err) {
+                console.log('fetch error:', err);
                 callback(err, null);
             });
     }
@@ -167,6 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadSummaryContent(key, forceRefresh) {
+        console.log('loadSummaryContent called:', key, 'force:', forceRefresh);
         if (summaryTitle && summaryText) {
             showLoading(summaryText);
         }
@@ -174,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!forceRefresh) {
             const cached = getCachedSummary(key);
             if (cached) {
+                console.log('using cache');
                 displaySummary(cached);
                 setCacheIcon(true);
                 return;
@@ -183,6 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setCacheIcon(false);
 
         fetchSummaryFromService(key, function(err, data) {
+            console.log('fetch callback:', err, data);
             if (err) {
                 if (summaryText) {
                     summaryText.textContent = 'Failed to load. Please try again.';
@@ -393,7 +404,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Recording toggle
     if (recordBtn) {
+        console.log('recordBtn found and listener attached');
         recordBtn.addEventListener('click', function() {
+            console.log('recordBtn clicked');
             isRecording = !isRecording;
 
             if (isRecording) {
@@ -440,7 +453,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Think button - refresh from service
     if (thinkBtn) {
+        console.log('thinkBtn found and listener attached');
         thinkBtn.addEventListener('click', function() {
+            console.log('thinkBtn clicked');
             if (summaryContent) {
                 summaryContent.classList.remove('collapsed');
             }
@@ -454,7 +469,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Upload button
     if (uploadBtn) {
+        console.log('uploadBtn found and listener attached');
         uploadBtn.addEventListener('click', function() {
+            console.log('uploadBtn clicked');
             if (fileInput) {
                 fileInput.click();
             }
@@ -554,7 +571,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // End session button
     if (endSession) {
+        console.log('endSession found and listener attached');
         endSession.addEventListener('click', function() {
+            console.log('endSession clicked');
             showToast('Meeting ended');
             setTimeout(function() {
                 window.location.href = '/home';

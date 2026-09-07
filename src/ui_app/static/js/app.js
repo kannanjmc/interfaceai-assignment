@@ -231,20 +231,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function isCacheFresh(key) {
+        const cached = getCachedSummary(key);
+        if (!cached || !cached.cached_at) return false;
+        const ttl = getAutoSummaryInterval() * 1000;
+        if (ttl <= 0) return false;
+        const cachedAt = new Date(cached.cached_at).getTime();
+        return (Date.now() - cachedAt) < ttl;
+    }
+
     function loadSummaryContent(key, forceRefresh) {
         console.log('loadSummaryContent called:', key, 'force:', forceRefresh);
         if (summaryTitle && summaryText) {
             showLoading(summaryText);
         }
 
-        if (!forceRefresh) {
+        if (!forceRefresh && isCacheFresh(key)) {
             const cached = getCachedSummary(key);
-            if (cached) {
-                console.log('using cache');
-                displaySummary(cached);
-                setCacheIcon(true);
-                return;
-            }
+            console.log('using cache');
+            displaySummary(cached);
+            setCacheIcon(true);
+            showToast('Loaded from cache');
+            return;
         }
 
         setCacheIcon(false);
@@ -299,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 this.classList.add('active');
 
-                loadSummaryContent(opt.key, true);
+                loadSummaryContent(opt.key, false);
             });
 
             summaryOptions.appendChild(chip);
@@ -625,7 +633,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Think button - refresh from service
+    // Think button
     if (thinkBtn) {
         console.log('thinkBtn found and listener attached');
         thinkBtn.addEventListener('click', function() {
@@ -637,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const activeChip = document.querySelector('.option-chip.active');
             const key = activeChip ? activeChip.getAttribute('data-option') : 'summary';
 
-            loadSummaryContent(key, true);
+            loadSummaryContent(key, false);
         });
     }
 

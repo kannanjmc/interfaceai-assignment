@@ -25,14 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
             isRecording = !isRecording;
             this.classList.toggle('recording', isRecording);
             
-            const icon = this.querySelector('i');
+            const iconContainer = this;
             if (isRecording) {
-                icon.classList.remove('fa-play');
-                icon.classList.add('fa-square');
+                iconContainer.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
                 updateRecordingStatus(true);
             } else {
-                icon.classList.remove('fa-square');
-                icon.classList.add('fa-play');
+                iconContainer.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
                 updateRecordingStatus(false);
             }
         });

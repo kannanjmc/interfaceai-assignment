@@ -508,6 +508,15 @@ html, body {
     }
 }
 
+/* Technical section */
+.technical-section {
+    margin-bottom: 16px;
+}
+
+.technical-section .section-card {
+    margin-bottom: 0;
+}
+
 /* View headers */
 .view-header {
     padding: 8px 4px 20px;

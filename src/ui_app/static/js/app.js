@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const activityItems = document.querySelectorAll('.activity-item');
 
     const AI_OPTIONS_KEY = 'aiSummaryOptions';
-    const AI_CACHE_KEY = 'aiSummaryCache';
+    const AI_CACHE_KEY = 'aiSummaryCacheV2';
     const AUTO_INTERVAL_KEY = 'autoSummaryInterval';
     const DEFAULT_AI_OPTIONS = ['summary', 'qa'];
     let autoSummaryTimer = null;

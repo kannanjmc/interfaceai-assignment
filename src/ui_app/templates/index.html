@@ -60,12 +60,7 @@
                 </div>
                 <div class="section-content" id="summaryContent">
                     <div class="summary-options-bar">
-                        <div class="summary-options" id="summaryOptions">
-                            <button class="option-chip active" data-option="summary">Summary</button>
-                            <button class="option-chip" data-option="qa">Q&A</button>
-                            <button class="option-chip" data-option="actions">Actions</button>
-                            <button class="option-chip" data-option="decisions">Decisions</button>
-                        </div>
+                        <div class="summary-options" id="summaryOptions"></div>
                         <button class="options-fab" id="optionsFab" aria-label="Add summary options">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         </button>
@@ -78,24 +73,7 @@
                                 <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>
                         </div>
-                        <div class="floating-options-list">
-                            <label class="floating-option" data-option="summary">
-                                <span>Summary</span>
-                                <div class="toggle active"></div>
-                            </label>
-                            <label class="floating-option" data-option="qa">
-                                <span>Q&A</span>
-                                <div class="toggle active"></div>
-                            </label>
-                            <label class="floating-option" data-option="actions">
-                                <span>Action Items</span>
-                                <div class="toggle"></div>
-                            </label>
-                            <label class="floating-option" data-option="decisions">
-                                <span>Decisions</span>
-                                <div class="toggle"></div>
-                            </label>
-                        </div>
+                        <div class="floating-options-list" id="floatingOptionsList"></div>
                     </div>
 
                     <div class="summary-card">
@@ -243,6 +221,10 @@
             <div class="view-header">
                 <h2>Settings</h2>
                 <p>Customize your experience</p>
+            </div>
+            <div class="section-card">
+                <h3>AI Summary Options</h3>
+                <div class="ai-options-list" id="aiOptionsList"></div>
             </div>
             <div class="section-card">
                 <h3>Preferences</h3>

@@ -179,12 +179,13 @@ html, body {
     position: absolute;
     right: 0;
     top: 36px;
-    width: 220px;
+    width: 240px;
+    max-height: 70vh;
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
     padding: 12px;
-    z-index: 100;
+    z-index: 1000;
     box-shadow: 0 8px 24px rgba(31, 38, 135, 0.15);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -229,7 +230,10 @@ html, body {
 .floating-options-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    max-height: calc(70vh - 60px);
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .floating-option {
@@ -398,6 +402,11 @@ html, body {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     position: relative;
+    z-index: 1;
+}
+
+.summary-section {
+    z-index: 10;
 }
 
 .section-header {
@@ -713,6 +722,20 @@ html, body {
     font-size: 13px;
     font-weight: 700;
     color: var(--text-primary);
+}
+
+/* Settings AI options list */
+.ai-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.ai-options-list .setting-row {
+    padding: 10px 0;
 }
 
 /* Settings */

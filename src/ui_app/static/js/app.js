@@ -10,6 +10,61 @@ document.addEventListener('DOMContentLoaded', function() {
     let transcriptCount = 0;
     let sampleIndex = 0;
 
+    // 50 AI summary options
+    const ALL_OPTIONS = [
+        { key: 'summary', label: 'Summary' },
+        { key: 'qa', label: 'Q&A' },
+        { key: 'actions', label: 'Action Items' },
+        { key: 'decisions', label: 'Decisions' },
+        { key: 'takeaways', label: 'Key Takeaways' },
+        { key: 'minutes', label: 'Meeting Minutes' },
+        { key: 'followups', label: 'Follow-ups' },
+        { key: 'attendees', label: 'Attendees' },
+        { key: 'sentiment', label: 'Sentiment' },
+        { key: 'topics', label: 'Topics' },
+        { key: 'blockers', label: 'Blockers' },
+        { key: 'risks', label: 'Risks' },
+        { key: 'highlights', label: 'Highlights' },
+        { key: 'nextsteps', label: 'Next Steps' },
+        { key: 'deliverables', label: 'Deliverables' },
+        { key: 'agreements', label: 'Agreements' },
+        { key: 'disagreements', label: 'Disagreements' },
+        { key: 'timeline', label: 'Timeline' },
+        { key: 'budget', label: 'Budget' },
+        { key: 'resources', label: 'Resources' },
+        { key: 'goals', label: 'Goals' },
+        { key: 'metrics', label: 'Metrics' },
+        { key: 'performance', label: 'Performance' },
+        { key: 'feedback', label: 'Feedback' },
+        { key: 'suggestions', label: 'Suggestions' },
+        { key: 'ideas', label: 'Ideas' },
+        { key: 'proposals', label: 'Proposals' },
+        { key: 'votes', label: 'Votes' },
+        { key: 'polls', label: 'Polls' },
+        { key: 'decisions_log', label: 'Decisions Log' },
+        { key: 'action_log', label: 'Action Log' },
+        { key: 'assignments', label: 'Task Assignments' },
+        { key: 'due_dates', label: 'Due Dates' },
+        { key: 'reminders', label: 'Reminders' },
+        { key: 'calendar', label: 'Calendar' },
+        { key: 'recap', label: 'Recap' },
+        { key: 'overview', label: 'Overview' },
+        { key: 'insights', label: 'Insights' },
+        { key: 'trends', label: 'Trends' },
+        { key: 'patterns', label: 'Patterns' },
+        { key: 'anomalies', label: 'Anomalies' },
+        { key: 'questions', label: 'Questions' },
+        { key: 'answers', label: 'Answers' },
+        { key: 'notes', label: 'Notes' },
+        { key: 'comments', label: 'Comments' },
+        { key: 'conclusion', label: 'Conclusion' },
+        { key: 'recommendations', label: 'Recommendations' },
+        { key: 'priorities', label: 'Priorities' },
+        { key: 'dependencies', label: 'Dependencies' },
+        { key: 'custom_1', label: 'Custom 1' },
+        { key: 'custom_2', label: 'Custom 2' }
+    ];
+
     // Meeting elements
     const recordBtn = document.getElementById('recordBtn');
     const thinkBtn = document.getElementById('thinkBtn');
@@ -17,30 +72,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
     const summaryText = document.getElementById('summaryText');
     const summaryContent = document.getElementById('summaryContent');
+    const summaryTitle = document.getElementById('summaryTitle');
+    const summaryOptions = document.getElementById('summaryOptions');
     const transcriptList = document.getElementById('transcriptList');
     const transcriptTitle = document.querySelector('.transcript-section .section-title');
-    const recordingSection = document.querySelector('.recording-section');
     const sectionHeaders = document.querySelectorAll('.section-header');
     const endSession = document.getElementById('endSession');
 
-    // Summary options
-    const optionChips = document.querySelectorAll('.option-chip');
-    const summaryTitle = document.getElementById('summaryTitle');
+    // Floating options
+    const optionsFab = document.getElementById('optionsFab');
+    const floatingOptions = document.getElementById('floatingOptions');
+    const optionsClose = document.getElementById('optionsClose');
+    const floatingOptionsList = document.getElementById('floatingOptionsList');
+
+    // Settings
+    const aiOptionsList = document.getElementById('aiOptionsList');
 
     // Settings toggles
     const toggles = document.querySelectorAll('.toggle');
 
-    // Floating options menu
-    const optionsFab = document.getElementById('optionsFab');
-    const floatingOptions = document.getElementById('floatingOptions');
-    const optionsClose = document.getElementById('optionsClose');
-    const floatingOptionToggles = document.querySelectorAll('.floating-option .toggle');
-
     // Activity items
     const activityItems = document.querySelectorAll('.activity-item');
 
-    // AI Summary Options localStorage helpers
     const AI_OPTIONS_KEY = 'aiSummaryOptions';
+    const AI_CACHE_KEY = 'aiSummaryCache';
     const DEFAULT_AI_OPTIONS = ['summary', 'qa'];
 
     function getAiSummaryOptions() {
@@ -49,119 +104,258 @@ document.addEventListener('DOMContentLoaded', function() {
             if (saved) {
                 return JSON.parse(saved);
             }
-        } catch (e) {
-            console.error('Error reading AI options:', e);
-        }
+        } catch (e) {}
         return DEFAULT_AI_OPTIONS;
     }
 
     function setAiSummaryOptions(options) {
         try {
             localStorage.setItem(AI_OPTIONS_KEY, JSON.stringify(options));
-        } catch (e) {
-            console.error('Error saving AI options:', e);
-        }
+        } catch (e) {}
     }
 
-    function isAiOptionEnabled(option) {
-        return getAiSummaryOptions().includes(option);
-    }
-
-    function updateOptionChipsVisibility() {
-        if (!optionChips.length) return;
-
-        let firstVisible = null;
-        let hasActive = false;
-
-        optionChips.forEach(function(chip) {
-            const option = chip.getAttribute('data-option');
-            const enabled = isAiOptionEnabled(option);
-
-            if (enabled) {
-                chip.style.display = '';
-                if (!firstVisible) {
-                    firstVisible = chip;
-                }
-                if (chip.classList.contains('active')) {
-                    hasActive = true;
-                }
-            } else {
-                chip.style.display = 'none';
-                chip.classList.remove('active');
+    function getSummaryCache() {
+        try {
+            const saved = localStorage.getItem(AI_CACHE_KEY);
+            if (saved) {
+                return JSON.parse(saved);
             }
+        } catch (e) {}
+        return {};
+    }
+
+    function setSummaryCache(key, data) {
+        try {
+            const cache = getSummaryCache();
+            cache[key] = {
+                title: data.title,
+                text: data.text,
+                generated_at: data.generated_at,
+                cached_at: new Date().toISOString()
+            };
+            localStorage.setItem(AI_CACHE_KEY, JSON.stringify(cache));
+        } catch (e) {}
+    }
+
+    function getCachedSummary(key) {
+        const cache = getSummaryCache();
+        return cache[key] || null;
+    }
+
+    function fetchSummaryFromService(key, callback) {
+        fetch('/api/summary/' + encodeURIComponent(key))
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Service error');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                setSummaryCache(key, data);
+                callback(null, data);
+            })
+            .catch(function(err) {
+                callback(err, null);
+            });
+    }
+
+    function loadSummaryContent(key, forceRefresh) {
+        if (summaryTitle && summaryText) {
+            showLoading(summaryText);
+        }
+
+        if (!forceRefresh) {
+            const cached = getCachedSummary(key);
+            if (cached) {
+                displaySummary(cached);
+                showToast('Loaded from cache');
+                return;
+            }
+        }
+
+        fetchSummaryFromService(key, function(err, data) {
+            if (err) {
+                if (summaryText) {
+                    summaryText.textContent = 'Failed to load. Please try again.';
+                    summaryText.style.color = 'var(--danger)';
+                }
+                showToast('Service error');
+                return;
+            }
+            displaySummary(data);
+            showToast(data.title + ' loaded from service');
         });
+    }
 
-        // Ensure at least one visible chip is active
-        if (firstVisible && !hasActive) {
-            optionChips.forEach(function(c) { c.classList.remove('active'); });
-            firstVisible.classList.add('active');
-
-            // Also reset summary text to default if title/text exist
-            if (summaryTitle && summaryText) {
-                const option = firstVisible.getAttribute('data-option');
-                if (summaryData[option]) {
-                    summaryTitle.textContent = summaryData[option].title;
-                    summaryText.textContent = 'Tap Think to generate the ' + summaryData[option].title + '.';
-                }
-            }
+    function displaySummary(data) {
+        if (summaryTitle && summaryText) {
+            summaryTitle.textContent = data.title;
+            summaryText.innerHTML = data.text;
+            summaryText.style.color = 'var(--text-primary)';
         }
     }
 
-    function initFloatingOptions() {
-        const enabledOptions = getAiSummaryOptions();
+    function getOptionByKey(key) {
+        return ALL_OPTIONS.find(function(opt) { return opt.key === key; });
+    }
 
-        floatingOptionToggles.forEach(function(toggle) {
-            const parent = toggle.closest('.floating-option');
-            const option = parent ? parent.getAttribute('data-option') : null;
-            if (!option) return;
+    function renderChips() {
+        if (!summaryOptions) return;
 
-            const enabled = enabledOptions.includes(option);
-            toggle.classList.toggle('active', enabled);
+        const enabled = getAiSummaryOptions();
+        summaryOptions.innerHTML = '';
+
+        enabled.forEach(function(key, index) {
+            const opt = getOptionByKey(key);
+            if (!opt) return;
+
+            const chip = document.createElement('button');
+            chip.className = 'option-chip' + (index === 0 ? ' active' : '');
+            chip.setAttribute('data-option', key);
+            chip.textContent = opt.label;
+
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.option-chip').forEach(function(c) {
+                    c.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                loadSummaryContent(opt.key, false);
+            });
+
+            summaryOptions.appendChild(chip);
+        });
+    }
+
+    function renderFloatingOptions() {
+        if (!floatingOptionsList) return;
+
+        const enabled = getAiSummaryOptions();
+        floatingOptionsList.innerHTML = '';
+
+        ALL_OPTIONS.forEach(function(opt) {
+            const isActive = enabled.includes(opt.key);
+
+            const label = document.createElement('label');
+            label.className = 'floating-option';
+            label.setAttribute('data-option', opt.key);
+
+            const span = document.createElement('span');
+            span.textContent = opt.label;
+
+            const toggle = document.createElement('div');
+            toggle.className = 'toggle' + (isActive ? ' active' : '');
+
+            label.appendChild(span);
+            label.appendChild(toggle);
+            floatingOptionsList.appendChild(label);
 
             toggle.addEventListener('click', function(e) {
                 e.stopPropagation();
-                this.classList.toggle('active');
-                const isActive = this.classList.contains('active');
-                const currentOptions = getAiSummaryOptions();
+                handleFloatingToggle(opt.key, this);
+            });
 
-                if (isActive) {
-                    if (!currentOptions.includes(option)) {
-                        currentOptions.push(option);
-                    }
-                } else {
-                    if (currentOptions.length > 1) {
-                        const index = currentOptions.indexOf(option);
-                        if (index > -1) {
-                            currentOptions.splice(index, 1);
-                        }
-                    } else {
-                        this.classList.add('active');
-                        showToast('At least one AI summary option is required');
-                        return;
-                    }
-                }
-
-                setAiSummaryOptions(currentOptions);
-                updateOptionChipsVisibility();
-                updateFloatingOptionToggles();
+            span.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handleFloatingToggle(opt.key, toggle);
             });
         });
     }
 
-    function updateFloatingOptionToggles() {
-        const enabledOptions = getAiSummaryOptions();
-        floatingOptionToggles.forEach(function(toggle) {
-            const parent = toggle.closest('.floating-option');
-            const option = parent ? parent.getAttribute('data-option') : null;
-            if (option) {
-                toggle.classList.toggle('active', enabledOptions.includes(option));
+    function renderSettingsOptions() {
+        if (!aiOptionsList) return;
+
+        const enabled = getAiSummaryOptions();
+        aiOptionsList.innerHTML = '';
+
+        ALL_OPTIONS.forEach(function(opt) {
+            const isActive = enabled.includes(opt.key);
+
+            const row = document.createElement('div');
+            row.className = 'setting-row';
+
+            const label = document.createElement('span');
+            label.className = 'setting-label';
+            label.textContent = opt.label;
+
+            const toggle = document.createElement('div');
+            toggle.className = 'toggle' + (isActive ? ' active' : '');
+
+            row.appendChild(label);
+            row.appendChild(toggle);
+            aiOptionsList.appendChild(row);
+
+            toggle.addEventListener('click', function() {
+                const currentOptions = getAiSummaryOptions();
+                const currentlyActive = currentOptions.includes(opt.key);
+
+                if (currentlyActive) {
+                    if (currentOptions.length > 1) {
+                        currentOptions.splice(currentOptions.indexOf(opt.key), 1);
+                    } else {
+                        showToast('At least one AI summary option is required');
+                        return;
+                    }
+                } else {
+                    currentOptions.push(opt.key);
+                }
+
+                setAiSummaryOptions(currentOptions);
+                this.classList.toggle('active', currentOptions.includes(opt.key));
+                showToast('AI summary options updated');
+            });
+        });
+    }
+
+    function handleFloatingToggle(key, toggle) {
+        const currentOptions = getAiSummaryOptions();
+        const isActive = currentOptions.includes(key);
+
+        if (isActive) {
+            if (currentOptions.length > 1) {
+                currentOptions.splice(currentOptions.indexOf(key), 1);
+            } else {
+                showToast('At least one AI summary option is required');
+                return;
+            }
+        } else {
+            currentOptions.push(key);
+        }
+
+        setAiSummaryOptions(currentOptions);
+
+        // Update all toggles to reflect current state
+        updateFloatingToggles();
+
+        // Re-render chips
+        const wasFirst = currentOptions[0] === key;
+        renderChips();
+
+        // Update summary text to first visible
+        const firstChip = document.querySelector('.option-chip');
+        if (firstChip && summaryTitle && summaryText) {
+            const activeOption = getOptionByKey(firstChip.getAttribute('data-option'));
+            if (activeOption) {
+                summaryTitle.textContent = 'AI ' + activeOption.label;
+                summaryText.textContent = 'Tap Think to generate the ' + activeOption.label + '.';
+            }
+        }
+    }
+
+    function updateFloatingToggles() {
+        const enabled = getAiSummaryOptions();
+        document.querySelectorAll('.floating-option').forEach(function(row) {
+            const key = row.getAttribute('data-option');
+            const toggle = row.querySelector('.toggle');
+            if (toggle) {
+                toggle.classList.toggle('active', enabled.includes(key));
             }
         });
     }
 
     function openFloatingOptions() {
         if (floatingOptions) {
-            updateFloatingOptionToggles();
+            updateFloatingToggles();
             floatingOptions.classList.add('open');
         }
     }
@@ -196,21 +390,10 @@ document.addEventListener('DOMContentLoaded', function() {
         closeFloatingOptions();
     });
 
-    // Initialize floating options menu
-    if (floatingOptionToggles.length) {
-        initFloatingOptions();
-    }
-
-    // Initialize meeting page option chips
-    if (optionChips.length) {
-        updateOptionChipsVisibility();
-    }
-
     // Recording toggle
     if (recordBtn) {
         recordBtn.addEventListener('click', function() {
             isRecording = !isRecording;
-            this.classList.toggle('recording', isRecording);
 
             if (isRecording) {
                 this.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
@@ -254,70 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Summary option chips
-    const summaryData = {
-        summary: {
-            title: 'AI Summary',
-            text: `
-                <strong>Meeting Summary</strong><br><br>
-                <strong>Key Points:</strong><br>
-                • Discussed Q4 roadmap and priorities<br>
-                • Reviewed progress on migration project<br>
-                • Action items assigned to team leads<br>
-                • Follow-up meeting scheduled for Friday
-            `
-        },
-        qa: {
-            title: 'Questions & Answers',
-            text: `
-                <strong>Q: What is the deadline for the migration?</strong><br>
-                A: End of Q4.<br><br>
-                <strong>Q: Who owns the testing allocation?</strong><br>
-                A: Jane Doe will coordinate with the QA team.<br><br>
-                <strong>Q: Next follow-up?</strong><br>
-                A: Friday at 2 PM.
-            `
-        },
-        actions: {
-            title: 'Action Items',
-            text: `
-                <strong>Action Items</strong><br><br>
-                • John: Draft architecture proposal by Monday<br>
-                • Jane: Allocate QA resources by Wednesday<br>
-                • Team: Review migration plan before Friday<br>
-                • All: Update project timeline in Jira
-            `
-        },
-        decisions: {
-            title: 'Decisions',
-            text: `
-                <strong>Decisions Made</strong><br><br>
-                • Move forward with the new architecture proposal<br>
-                • Allocate additional QA resources for testing<br>
-                • Keep weekly sync cadence until launch<br>
-                • Escalate blockers to leadership within 24 hours
-            `
-        }
-    };
-
-    optionChips.forEach(function(chip) {
-        chip.addEventListener('click', function() {
-            optionChips.forEach(function(c) { c.classList.remove('active'); });
-            this.classList.add('active');
-
-            const option = this.getAttribute('data-option');
-            if (summaryData[option] && summaryText && summaryTitle) {
-                showLoading(summaryText);
-                setTimeout(function() {
-                    summaryTitle.textContent = summaryData[option].title;
-                    summaryText.innerHTML = summaryData[option].text;
-                    summaryText.style.color = 'var(--text-primary)';
-                }, 600);
-            }
-        });
-    });
-
-    // Think button - generate selected AI summary
+    // Think button - refresh from service
     if (thinkBtn) {
         thinkBtn.addEventListener('click', function() {
             if (summaryContent) {
@@ -325,22 +445,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const activeChip = document.querySelector('.option-chip.active');
-            const option = activeChip ? activeChip.getAttribute('data-option') : 'summary';
+            const key = activeChip ? activeChip.getAttribute('data-option') : 'summary';
 
-            if (summaryText && summaryTitle && summaryData[option]) {
-                showLoading(summaryText);
-
-                setTimeout(function() {
-                    summaryTitle.textContent = summaryData[option].title;
-                    summaryText.innerHTML = summaryData[option].text;
-                    summaryText.style.color = 'var(--text-primary)';
-                    showToast(summaryData[option].title + ' generated');
-                }, 1200);
-            }
+            loadSummaryContent(key, true);
         });
     }
 
-    // Upload button - trigger file input
+    // Upload button
     if (uploadBtn) {
         uploadBtn.addEventListener('click', function() {
             if (fileInput) {
@@ -417,9 +528,12 @@ document.addEventListener('DOMContentLoaded', function() {
         scheduleNextTranscript();
     }, 2000);
 
-    // Settings toggles (non-floating-option)
+    // Settings toggles
     toggles.forEach(function(toggle) {
         if (toggle.closest('.floating-option')) {
+            return;
+        }
+        if (toggle.closest('#aiOptionsList')) {
             return;
         }
         toggle.addEventListener('click', function() {
@@ -427,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Activity item clicks
+    // Activity items
     activityItems.forEach(function(item) {
         item.addEventListener('click', function() {
             const text = this.querySelector('.activity-text');
@@ -447,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Helper: Show loading state
+    // Helpers
     function showLoading(element) {
         if (!element) return;
         element.innerHTML = `
@@ -456,15 +570,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <span></span>
                 <span></span>
             </div>
-            <div style="color: var(--text-muted); font-size: 13px; margin-top: 8px;">
-                Generating summary...
+            <div style="color: var(--text-muted); font-size: 12px; margin-top: 6px;">
+                Generating...
             </div>
         `;
     }
 
-    // Helper: Show toast notification
     function showToast(message) {
-        // Remove existing toast
         const existingToast = document.querySelector('.toast');
         if (existingToast) {
             existingToast.remove();
@@ -475,12 +587,10 @@ document.addEventListener('DOMContentLoaded', function() {
         toast.textContent = message;
         document.body.appendChild(toast);
 
-        // Trigger show animation
         requestAnimationFrame(function() {
             toast.classList.add('show');
         });
 
-        // Hide after 2.5 seconds
         setTimeout(function() {
             toast.classList.remove('show');
             setTimeout(function() {
@@ -489,10 +599,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2500);
     }
 
-    // Helper: Escape HTML to prevent XSS
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // Initialize
+    renderFloatingOptions();
+    renderSettingsOptions();
+    renderChips();
+
+    const firstChip = document.querySelector('.option-chip');
+    if (firstChip && summaryTitle && summaryText) {
+        const opt = getOptionByKey(firstChip.getAttribute('data-option'));
+        if (opt) {
+            summaryTitle.textContent = 'AI ' + opt.label;
+            summaryText.textContent = 'Tap Think to generate the ' + opt.label + '.';
+        }
     }
 });

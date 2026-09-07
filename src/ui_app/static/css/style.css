@@ -457,6 +457,13 @@ html, body {
     display: block;
     text-align: center;
     line-height: 1.2;
+    pointer-events: none;
+    user-select: none;
+}
+
+.nav-item .icon {
+    pointer-events: none;
+    user-select: none;
 }
 
 .nav-item.active {
@@ -499,6 +506,51 @@ html, body {
     .tab-btn {
         padding: 8px 18px;
     }
+}
+
+/* Placeholder view for other tabs */
+.placeholder-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    flex: 1;
+    min-height: 60vh;
+}
+
+.placeholder-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.placeholder-icon .icon {
+    width: 40px;
+    height: 40px;
+    color: var(--primary-color);
+    stroke: var(--primary-color);
+}
+
+.placeholder-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    text-transform: capitalize;
+}
+
+.placeholder-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 260px;
+    line-height: 1.5;
 }
 
 /* Toast notifications */

@@ -365,6 +365,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 this.classList.add('active');
 
+                if (summaryContent) {
+                    summaryContent.classList.remove('collapsed');
+                }
                 loadSummaryContent(opt.key, false);
             });
 
@@ -693,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Think button
+    // Think button - always refresh from service
     if (thinkBtn) {
         console.log('thinkBtn found and listener attached');
         thinkBtn.addEventListener('click', function() {
@@ -705,7 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const activeChip = document.querySelector('.option-chip.active');
             const key = activeChip ? activeChip.getAttribute('data-option') : 'summary';
 
-            loadSummaryContent(key, false);
+            loadSummaryContent(key, true);
         });
     }
 

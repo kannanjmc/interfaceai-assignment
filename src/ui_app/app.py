@@ -6,7 +6,7 @@ It provides a clean, mobile-first web interface similar to the
 meeting assistant design shared by the user.
 """
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from datetime import datetime
 import json
 import urllib.request
@@ -104,9 +104,10 @@ def settings():
     return render_template('index.html', active_tab='settings')
 
 
-@app.route('/api/summary/<option>')
-def api_summary(option):
+@app.route('/api/summary')
+def api_summary():
     """Return AI-generated summary content for the requested option."""
+    option = request.args.get('option', 'summary')
     content = generate_summary_content(option)
     return jsonify({
         'option': option,

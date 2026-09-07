@@ -189,8 +189,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function fetchSummaryFromService(key, callback) {
-        console.log('fetching /api/summary/' + encodeURIComponent(key));
-        fetch('/api/summary/' + encodeURIComponent(key))
+        console.log('fetching /api/summary?option=' + encodeURIComponent(key));
+        fetch('/api/summary?option=' + encodeURIComponent(key))
             .then(function(response) {
                 console.log('fetch response:', response.status);
                 if (!response.ok) {

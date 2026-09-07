@@ -244,32 +244,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const enabled = getAiSummaryOptions();
         floatingOptionsList.innerHTML = '';
 
-        ALL_OPTIONS.forEach(function(opt) {
-            const isActive = enabled.includes(opt.key);
+        const intro = document.createElement('span');
+        intro.className = 'option-paragraph-intro';
+        intro.textContent = 'Tap the options you want to show: ';
+        floatingOptionsList.appendChild(intro);
 
-            const label = document.createElement('label');
-            label.className = 'floating-option';
-            label.setAttribute('data-option', opt.key);
+        ALL_OPTIONS.forEach(function(opt, index) {
+            const word = document.createElement('span');
+            word.className = 'option-word' + (enabled.includes(opt.key) ? ' selected' : '');
+            word.setAttribute('data-option', opt.key);
+            word.textContent = opt.label;
+            if (index < ALL_OPTIONS.length - 1) {
+                word.textContent += ',';
+            }
 
-            const span = document.createElement('span');
-            span.textContent = opt.label;
-
-            const toggle = document.createElement('div');
-            toggle.className = 'toggle' + (isActive ? ' active' : '');
-
-            label.appendChild(span);
-            label.appendChild(toggle);
-            floatingOptionsList.appendChild(label);
-
-            toggle.addEventListener('click', function(e) {
+            word.addEventListener('click', function(e) {
                 e.stopPropagation();
-                handleFloatingToggle(opt.key, this);
+                handleFloatingToggle(opt.key);
             });
 
-            span.addEventListener('click', function(e) {
-                e.stopPropagation();
-                handleFloatingToggle(opt.key, toggle);
-            });
+            floatingOptionsList.appendChild(word);
         });
     }
 
@@ -318,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function handleFloatingToggle(key, toggle) {
+    function handleFloatingToggle(key) {
         const currentOptions = getAiSummaryOptions();
         const isActive = currentOptions.includes(key);
 
@@ -335,11 +329,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         setAiSummaryOptions(currentOptions);
 
-        // Update all toggles to reflect current state
+        // Update all word styles
         updateFloatingToggles();
 
         // Re-render chips
-        const wasFirst = currentOptions[0] === key;
         renderChips();
 
         // Update summary text to first visible
@@ -355,12 +348,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateFloatingToggles() {
         const enabled = getAiSummaryOptions();
-        document.querySelectorAll('.floating-option').forEach(function(row) {
-            const key = row.getAttribute('data-option');
-            const toggle = row.querySelector('.toggle');
-            if (toggle) {
-                toggle.classList.toggle('active', enabled.includes(key));
-            }
+        document.querySelectorAll('.option-word').forEach(function(word) {
+            const key = word.getAttribute('data-option');
+            word.classList.toggle('selected', enabled.includes(key));
         });
     }
 

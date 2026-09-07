@@ -268,38 +268,23 @@ html, body {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: 12px;
-    padding: 6px 10px;
+    padding: 8px 10px;
     margin-bottom: 10px;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
 
-.recording-bar {
+.recording-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-}
-
-.recording-left {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex: 1;
-    min-width: 0;
-}
-
-.recording-right {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    margin-bottom: 8px;
 }
 
 .recording-status {
     display: flex;
     align-items: center;
     gap: 4px;
-    min-width: 0;
 }
 
 .recording-dot {
@@ -308,7 +293,6 @@ html, body {
     background: var(--danger);
     border-radius: 50%;
     animation: pulse 1.5s infinite;
-    flex-shrink: 0;
 }
 
 @keyframes pulse {
@@ -320,7 +304,33 @@ html, body {
     font-size: 10px;
     font-weight: 700;
     color: var(--danger);
-    white-space: nowrap;
+}
+
+.end-session {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 7px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill);
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--danger);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.end-session:active {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.recording-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .record-btn {
@@ -337,7 +347,6 @@ html, body {
     box-shadow: 0 2px 4px rgba(238, 90, 111, 0.35);
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0;
-    flex-shrink: 0;
 }
 
 .record-btn:active {
@@ -349,39 +358,37 @@ html, body {
     height: 11px;
 }
 
-.icon-action-btn {
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    color: var(--text-secondary);
+.action-btn {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 1px;
+    padding: 5px 8px;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    color: var(--text-primary);
+    font-size: 9px;
+    font-weight: 600;
     cursor: pointer;
-    padding: 0;
-    flex-shrink: 0;
+    min-width: 42px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
 
-.icon-action-btn .icon {
-    width: 11px;
-    height: 11px;
+.action-btn:active {
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(0.96);
 }
 
-.icon-action-btn:active {
-    background: rgba(255, 255, 255, 0.7);
-    transform: scale(0.92);
+.action-btn .icon {
+    width: 11px;
+    height: 11px;
+    color: var(--text-secondary);
 }
 
 .think-btn .icon {
     color: var(--accent);
-}
-
-.end-btn {
-    color: var(--danger);
 }
 
 /* Summary and Transcript Sections */

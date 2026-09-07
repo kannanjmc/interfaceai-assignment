@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const summaryText = document.getElementById('summaryText');
     const summaryContent = document.getElementById('summaryContent');
     const summaryTitle = document.getElementById('summaryTitle');
+    const summaryHistory = document.getElementById('summaryHistory');
     const cacheIcon = document.getElementById('cacheIcon');
     const summaryOptions = document.getElementById('summaryOptions');
     const transcriptList = document.getElementById('transcriptList');
@@ -177,19 +178,34 @@ document.addEventListener('DOMContentLoaded', function() {
     function setSummaryCache(key, data) {
         try {
             const cache = getSummaryCache();
-            cache[key] = {
+            if (!cache[key]) {
+                cache[key] = [];
+            }
+
+            cache[key].unshift({
                 title: data.title,
                 text: data.text,
                 generated_at: data.generated_at,
                 cached_at: new Date().toISOString()
-            };
+            });
+
+            if (cache[key].length > 5) {
+                cache[key] = cache[key].slice(0, 5);
+            }
+
             localStorage.setItem(AI_CACHE_KEY, JSON.stringify(cache));
         } catch (e) {}
     }
 
     function getCachedSummary(key) {
         const cache = getSummaryCache();
-        return cache[key] || null;
+        if (!cache[key] || !cache[key].length) return null;
+        return cache[key][0];
+    }
+
+    function getSummaryHistory(key) {
+        const cache = getSummaryCache();
+        return cache[key] || [];
     }
 
     function getTranscriptText() {
@@ -274,11 +290,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function renderHistory(key) {
+        if (!summaryHistory) return;
+
+        const history = getSummaryHistory(key);
+        if (history.length <= 1) {
+            summaryHistory.innerHTML = '';
+            return;
+        }
+
+        summaryHistory.innerHTML = '<div class="summary-history-title">Previous</div>';
+
+        history.slice(1).forEach(function(item, index) {
+            const entry = document.createElement('div');
+            entry.className = 'summary-history-item';
+            entry.innerHTML = item.text;
+            entry.style.display = index === 0 ? '' : 'none';
+
+            if (index === 0) {
+                summaryHistory.appendChild(entry);
+            }
+        });
+
+        if (history.length > 2) {
+            const count = document.createElement('div');
+            count.className = 'summary-history-count';
+            count.textContent = '+' + (history.length - 2) + ' more';
+            summaryHistory.appendChild(count);
+        }
+    }
+
     function displaySummary(data) {
         if (summaryTitle && summaryText) {
             summaryTitle.textContent = data.title;
             summaryText.innerHTML = data.text;
             summaryText.style.color = 'var(--text-primary)';
+        }
+
+        const activeChip = document.querySelector('.option-chip.active');
+        const key = activeChip ? activeChip.getAttribute('data-option') : null;
+        if (key) {
+            renderHistory(key);
         }
     }
 

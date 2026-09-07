@@ -517,6 +517,36 @@ html, body {
     color: var(--text-primary);
 }
 
+.summary-history {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.summary-history-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.summary-history-item {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.summary-history-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 4px 0;
+}
+
 .transcript-list {
     display: flex;
     flex-direction: column;

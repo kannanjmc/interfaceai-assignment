@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const summaryText = document.getElementById('summaryText');
     const summaryContent = document.getElementById('summaryContent');
     const summaryTitle = document.getElementById('summaryTitle');
+    const cacheIcon = document.getElementById('cacheIcon');
     const summaryOptions = document.getElementById('summaryOptions');
     const transcriptList = document.getElementById('transcriptList');
     const transcriptTitle = document.querySelector('.transcript-section .section-title');
@@ -159,6 +160,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    function setCacheIcon(visible) {
+        if (cacheIcon) {
+            cacheIcon.style.display = visible ? '' : 'none';
+        }
+    }
+
     function loadSummaryContent(key, forceRefresh) {
         if (summaryTitle && summaryText) {
             showLoading(summaryText);
@@ -168,10 +175,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const cached = getCachedSummary(key);
             if (cached) {
                 displaySummary(cached);
-                showToast('Loaded from cache');
+                setCacheIcon(true);
                 return;
             }
         }
+
+        setCacheIcon(false);
 
         fetchSummaryFromService(key, function(err, data) {
             if (err) {
@@ -179,10 +188,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     summaryText.textContent = 'Failed to load. Please try again.';
                     summaryText.style.color = 'var(--danger)';
                 }
+                setCacheIcon(false);
                 showToast('Service error');
                 return;
             }
             displaySummary(data);
+            setCacheIcon(false);
             showToast(data.title + ' loaded from service');
         });
     }

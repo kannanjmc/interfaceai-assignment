@@ -452,11 +452,28 @@ html, body {
     padding: 12px;
 }
 
+.summary-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
 .summary-title {
     font-size: 14px;
     font-weight: 700;
     color: var(--accent);
-    margin-bottom: 6px;
+    margin: 0;
+}
+
+.cache-icon {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+.cache-icon .icon-sm {
+    stroke: var(--text-muted);
 }
 
 .summary-text {

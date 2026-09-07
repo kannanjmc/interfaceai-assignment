@@ -9,6 +9,7 @@ meeting assistant design shared by the user.
 from flask import Flask, render_template, jsonify, request
 from datetime import datetime
 import json
+import re
 import urllib.request
 import urllib.error
 
@@ -83,11 +84,16 @@ def generate_summary_content(option, transcript='', previous=''):
     prompt = build_prompt(option, transcript, previous)
     response = call_ollama(prompt)
 
-    # Strip stray plain text and fallback sentences
+    # Clean up common prompt failures and unbalanced HTML
     response = response.replace('Not enough content to summarize.', '').strip()
+    response = re.sub(r'</?strong>', '', response, flags=re.IGNORECASE)
+    response = response.strip().replace('\n', '<br>')
+
+    label = option.replace('_', ' ').replace('-', ' ').title()
+    response = f'<strong>{label}</strong><br>{response}'
 
     return {
-        'title': 'AI ' + option.replace('_', ' ').replace('-', ' ').title(),
+        'title': 'AI ' + label,
         'text': response
     }
 

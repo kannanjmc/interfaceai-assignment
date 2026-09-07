@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Meeting Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Meeting assistant</h1>
+            <div class="header-actions">
+                <button class="icon-btn" aria-label="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="icon-btn" aria-label="Tools">
+                    <i class="fas fa-wrench"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="general">General</button>
+                    <button class="tab-btn" data-tab="technical">Technical</button>
+                </div>
+                <div class="end-session">
+                    <i class="fas fa-clock"></i>
+                    <span>End</span>
+                </div>
+            </div>
+
+            <!-- Recording Section -->
+            <div class="recording-section">
+                <div class="recording-header">
+                    <div class="recording-status">
+                        <span class="recording-dot"></span>
+                        <span class="recording-text">Recording</span>
+                    </div>
+                    <i class="fas fa-chevron-down toggle-recording" aria-label="Toggle"></i>
+                </div>
+
+                <div class="recording-controls">
+                    <button class="record-btn" id="recordBtn" aria-label="Stop recording">
+                        <i class="fas fa-square"></i>
+                    </button>
+                    <button class="action-btn think-btn" id="thinkBtn">
+                        <i class="fas fa-brain"></i>
+                        <span>Think</span>
+                    </button>
+                    <button class="action-btn upload-btn" id="uploadBtn">
+                        <i class="fas fa-upload"></i>
+                        <span>Upload</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Summary Section -->
+            <div class="summary-section">
+                <div class="section-header" data-toggle="summary">
+                    <span class="section-title">AI Summary</span>
+                    <i class="fas fa-chevron-up"></i>
+                </div>
+                <div class="section-content" id="summaryContent">
+                    <div class="summary-card">
+                        <h3 class="summary-title">AI Summary</h3>
+                        <p class="summary-text" id="summaryText">
+                            Tap Think, Deep Think, or Ask to see the AI summary here.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transcript Section -->
+            <div class="transcript-section">
+                <div class="section-header" data-toggle="transcript">
+                    <span class="section-title">Transcript (0)</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="section-content collapsed" id="transcriptContent">
+                    <div class="transcript-list" id="transcriptList">
+                        <p class="empty-state">No transcript available yet. Start recording to capture the meeting.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/home" class="nav-item {{ 'active' if active_tab == 'home' else '' }}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/activity" class="nav-item {{ 'active' if active_tab == 'activity' else '' }}">
+                <i class="fas fa-list-ul"></i>
+                <span>Activity</span>
+            </a>
+            <a href="/meeting" class="nav-item {{ 'active' if active_tab == 'meeting' else 'active' }}">
+                <i class="fas fa-book"></i>
+                <span>Meeting</span>
+            </a>
+            <a href="/profile" class="nav-item {{ 'active' if active_tab == 'profile' else '' }}">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="/settings" class="nav-item {{ 'active' if active_tab == 'settings' else '' }}">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Hidden file input for upload -->
+    <input type="file" id="fileInput" style="display: none;" accept=".txt,.md,.pdf,.doc,.docx">
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

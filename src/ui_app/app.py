@@ -55,7 +55,8 @@ def build_prompt(option, transcript=''):
             f'Generate a concise meeting {label} from this transcript. '
             f'Return the result as a short HTML snippet using only <strong> and <br> tags '
             f'and bullet points (•). Keep it under 8 lines. Do not include markdown code blocks. '
-            f'If the transcript is short or empty, say "Not enough content to summarize."'
+            f'Even if the transcript is short, do your best to extract useful points. '
+            f'Output only the HTML, no explanation.'
         )
 
     return (
@@ -69,8 +70,17 @@ def build_prompt(option, transcript=''):
 
 def generate_summary_content(option, transcript=''):
     """Generate an AI summary using local Ollama."""
+    if not transcript or not transcript.strip():
+        return {
+            'title': 'AI ' + option.replace('_', ' ').replace('-', ' ').title(),
+            'text': '<strong>No transcript yet</strong><br>Start recording and speak to generate a real summary.'
+        }
+
     prompt = build_prompt(option, transcript)
     response = call_ollama(prompt)
+
+    # Strip stray plain text and fallback sentences
+    response = response.replace('Not enough content to summarize.', '').strip()
 
     return {
         'title': 'AI ' + option.replace('_', ' ').replace('-', ' ').title(),

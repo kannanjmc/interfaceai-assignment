@@ -8,60 +8,115 @@ meeting assistant design shared by the user.
 
 from flask import Flask, render_template, jsonify
 from datetime import datetime
+import json
+import urllib.request
+import urllib.error
 
 app = Flask(__name__)
 
+OLLAMA_URL = 'http://localhost:11434/api/generate'
+OLLAMA_MODEL = 'llama3.2:latest'
+
+
+def call_ollama(prompt, model=OLLAMA_MODEL):
+    """Call a local Ollama instance and return the generated text."""
+    payload = json.dumps({
+        'model': model,
+        'prompt': prompt,
+        'stream': False,
+        'options': {'temperature': 0.4}
+    }).encode('utf-8')
+
+    req = urllib.request.Request(
+        OLLAMA_URL,
+        data=payload,
+        headers={'Content-Type': 'application/json'},
+        method='POST'
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=60) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            return data.get('response', '').strip()
+    except urllib.error.HTTPError as e:
+        return f'<strong>Ollama error</strong><br>Status {e.code}: {e.read().decode("utf-8")}'
+    except Exception as e:
+        return f'<strong>Could not reach Ollama</strong><br>{str(e)}'
+
+
+def build_prompt(option):
+    """Build a prompt for the requested summary option."""
+    label = option.replace('_', ' ').replace('-', ' ').title()
+
+    return (
+        f'You are a meeting assistant. Generate a concise meeting {label} '
+        f'for a weekly sync that covered Q4 roadmap, migration project progress, '
+        f'testing allocation, and a follow-up meeting on Friday. '
+        f'Return the result as a short HTML snippet using only <strong> and <br> tags '
+        f'and bullet points (•). Keep it under 6 lines. Do not include markdown code blocks.'
+    )
+
 
 def generate_summary_content(option):
-    """Generate a mock AI summary for the requested option type."""
-    templates = {
-        'summary': {
-            'title': 'AI Summary',
-            'text': ('<strong>Meeting Summary</strong><br><br>'
-                     '<strong>Key Points:</strong><br>'
-                     '• Discussed Q4 roadmap and priorities<br>'
-                     '• Reviewed progress on migration project<br>'
-                     '• Action items assigned to team leads<br>'
-                     '• Follow-up meeting scheduled for Friday')
-        },
-        'qa': {
-            'title': 'Questions & Answers',
-            'text': ('<strong>Q: What is the deadline for the migration?</strong><br>'
-                     'A: End of Q4.<br><br>'
-                     '<strong>Q: Who owns the testing allocation?</strong><br>'
-                     'A: Jane Doe will coordinate with QA.<br><br>'
-                     '<strong>Q: Next follow-up?</strong><br>'
-                     'A: Friday at 2 PM.')
-        },
-        'actions': {
-            'title': 'Action Items',
-            'text': ('<strong>Action Items</strong><br><br>'
-                     '• John: Draft architecture proposal by Monday<br>'
-                     '• Jane: Allocate QA resources by Wednesday<br>'
-                     '• Team: Review migration plan before Friday<br>'
-                     '• All: Update project timeline in Jira')
-        },
-        'decisions': {
-            'title': 'Decisions',
-            'text': ('<strong>Decisions Made</strong><br><br>'
-                     '• Move forward with the new architecture proposal<br>'
-                     '• Allocate additional QA resources for testing<br>'
-                     '• Keep weekly sync cadence until launch<br>'
-                     '• Escalate blockers to leadership within 24 hours')
+    """Generate an AI summary using local Ollama, with mock fallback."""
+    prompt = build_prompt(option)
+    response = call_ollama(prompt)
+
+    if not response or response.startswith('<strong>Could not reach Ollama'):
+        # Fallback to mock template when Ollama is unavailable
+        templates = {
+            'summary': {
+                'title': 'AI Summary',
+                'text': ('<strong>Meeting Summary</strong><br><br>'
+                         '<strong>Key Points:</strong><br>'
+                         '• Discussed Q4 roadmap and priorities<br>'
+                         '• Reviewed progress on migration project<br>'
+                         '• Action items assigned to team leads<br>'
+                         '• Follow-up meeting scheduled for Friday')
+            },
+            'qa': {
+                'title': 'Questions & Answers',
+                'text': ('<strong>Q: What is the deadline for the migration?</strong><br>'
+                         'A: End of Q4.<br><br>'
+                         '<strong>Q: Who owns the testing allocation?</strong><br>'
+                         'A: Jane Doe will coordinate with QA.<br><br>'
+                         '<strong>Q: Next follow-up?</strong><br>'
+                         'A: Friday at 2 PM.')
+            },
+            'actions': {
+                'title': 'Action Items',
+                'text': ('<strong>Action Items</strong><br><br>'
+                         '• John: Draft architecture proposal by Monday<br>'
+                         '• Jane: Allocate QA resources by Wednesday<br>'
+                         '• Team: Review migration plan before Friday<br>'
+                         '• All: Update project timeline in Jira')
+            },
+            'decisions': {
+                'title': 'Decisions',
+                'text': ('<strong>Decisions Made</strong><br><br>'
+                         '• Move forward with the new architecture proposal<br>'
+                         '• Allocate additional QA resources for testing<br>'
+                         '• Keep weekly sync cadence until launch<br>'
+                         '• Escalate blockers to leadership within 24 hours')
+            }
         }
-    }
 
-    if option in templates:
-        return templates[option]
+        if option in templates:
+            return templates[option]
 
-    label = option.replace('_', ' ').replace('-', ' ').title()
+        label = option.replace('_', ' ').replace('-', ' ').title()
+        return {
+            'title': 'AI ' + label,
+            'text': ('<strong>' + label + '</strong><br><br>'
+                     '• Key ' + label.lower() + ' point 1 from the discussion<br>'
+                     '• Key ' + label.lower() + ' point 2 captured by AI<br>'
+                     '• Relevant ' + label.lower() + ' detail from the meeting<br>'
+                     '• Follow-up consideration for ' + label.lower())
+        }
+
     return {
-        'title': 'AI ' + label,
-        'text': ('<strong>' + label + '</strong><br><br>'
-                 '• Key ' + label.lower() + ' point 1 from the discussion<br>'
-                 '• Key ' + label.lower() + ' point 2 captured by AI<br>'
-                 '• Relevant ' + label.lower() + ' detail from the meeting<br>'
-                 '• Follow-up consideration for ' + label.lower())
+        'title': 'AI ' + option.replace('_', ' ').replace('-', ' ').title(),
+        'text': response
     }
 
 

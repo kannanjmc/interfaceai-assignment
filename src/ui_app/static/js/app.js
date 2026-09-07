@@ -20,21 +20,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const transcriptList = document.getElementById('transcriptList');
     const transcriptTitle = document.querySelector('.transcript-section .section-title');
     const recordingSection = document.querySelector('.recording-section');
-    const toggleRecording = document.querySelector('.toggle-recording');
     const sectionHeaders = document.querySelectorAll('.section-header');
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const endSession = document.querySelector('.end-session');
+    const endSession = document.getElementById('endSession');
+
+    // Summary options
+    const optionChips = document.querySelectorAll('.option-chip');
+    const summaryTitle = document.getElementById('summaryTitle');
 
     // Settings toggles
     const toggles = document.querySelectorAll('.toggle');
 
     // Activity items
     const activityItems = document.querySelectorAll('.activity-item');
-
-    // Technical section
-    const technicalContent = document.getElementById('technicalContent');
-    const summarySection = document.querySelector('.summary-section');
-    const transcriptSection = document.querySelector('.transcript-section');
 
     // Recording toggle
     if (recordBtn) {
@@ -60,20 +57,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (recordingText) {
             recordingText.textContent = recording ? 'Recording' : 'Paused';
-            recordingText.style.color = recording ? 'var(--recording-red)' : 'var(--text-secondary)';
+            recordingText.style.color = recording ? 'var(--danger)' : 'var(--text-secondary)';
         }
 
         if (recordingDot) {
             recordingDot.style.animation = recording ? 'pulse 1.5s infinite' : 'none';
-            recordingDot.style.backgroundColor = recording ? 'var(--recording-red)' : 'var(--text-muted)';
+            recordingDot.style.backgroundColor = recording ? 'var(--danger)' : 'var(--text-muted)';
         }
-    }
-
-    // Collapse/expand recording section
-    if (toggleRecording && recordingSection) {
-        toggleRecording.addEventListener('click', function() {
-            recordingSection.classList.toggle('collapsed');
-        });
     }
 
     // Section collapse/expand
@@ -91,56 +81,88 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Tab switching (General / Technical)
-    tabButtons.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            tabButtons.forEach(function(b) { b.classList.remove('active'); });
+    // Summary option chips
+    const summaryData = {
+        summary: {
+            title: 'AI Summary',
+            text: `
+                <strong>Meeting Summary</strong><br><br>
+                <strong>Key Points:</strong><br>
+                • Discussed Q4 roadmap and priorities<br>
+                • Reviewed progress on migration project<br>
+                • Action items assigned to team leads<br>
+                • Follow-up meeting scheduled for Friday
+            `
+        },
+        qa: {
+            title: 'Questions & Answers',
+            text: `
+                <strong>Q: What is the deadline for the migration?</strong><br>
+                A: End of Q4.<br><br>
+                <strong>Q: Who owns the testing allocation?</strong><br>
+                A: Jane Doe will coordinate with the QA team.<br><br>
+                <strong>Q: Next follow-up?</strong><br>
+                A: Friday at 2 PM.
+            `
+        },
+        actions: {
+            title: 'Action Items',
+            text: `
+                <strong>Action Items</strong><br><br>
+                • John: Draft architecture proposal by Monday<br>
+                • Jane: Allocate QA resources by Wednesday<br>
+                • Team: Review migration plan before Friday<br>
+                • All: Update project timeline in Jira
+            `
+        },
+        decisions: {
+            title: 'Decisions',
+            text: `
+                <strong>Decisions Made</strong><br><br>
+                • Move forward with the new architecture proposal<br>
+                • Allocate additional QA resources for testing<br>
+                • Keep weekly sync cadence until launch<br>
+                • Escalate blockers to leadership within 24 hours
+            `
+        }
+    };
+
+    optionChips.forEach(function(chip) {
+        chip.addEventListener('click', function() {
+            optionChips.forEach(function(c) { c.classList.remove('active'); });
             this.classList.add('active');
 
-            const tab = this.getAttribute('data-tab');
-            if (tab === 'technical') {
-                if (summarySection) summarySection.style.display = 'none';
-                if (transcriptSection) transcriptSection.style.display = 'none';
-                if (technicalContent) technicalContent.classList.remove('collapsed');
-            } else {
-                if (summarySection) summarySection.style.display = '';
-                if (transcriptSection) transcriptSection.style.display = '';
-                if (technicalContent) technicalContent.classList.add('collapsed');
+            const option = this.getAttribute('data-option');
+            if (summaryData[option] && summaryText && summaryTitle) {
+                showLoading(summaryText);
+                setTimeout(function() {
+                    summaryTitle.textContent = summaryData[option].title;
+                    summaryText.innerHTML = summaryData[option].text;
+                    summaryText.style.color = 'var(--text-primary)';
+                }, 600);
             }
         });
     });
 
-    // Think button - generate sample summary
+    // Think button - generate selected AI summary
     if (thinkBtn) {
         thinkBtn.addEventListener('click', function() {
             if (summaryContent) {
                 summaryContent.classList.remove('collapsed');
             }
 
-            if (summarySection) {
-                const header = summarySection.querySelector('.section-header');
-                if (header) header.classList.remove('collapsed');
-            }
+            const activeChip = document.querySelector('.option-chip.active');
+            const option = activeChip ? activeChip.getAttribute('data-option') : 'summary';
 
-            if (summaryText) {
+            if (summaryText && summaryTitle && summaryData[option]) {
                 showLoading(summaryText);
 
-                // Simulate AI processing
                 setTimeout(function() {
-                    summaryText.innerHTML = `
-                        <strong>Meeting Summary</strong><br><br>
-                        <strong>Key Points:</strong><br>
-                        • Discussed Q4 roadmap and priorities<br>
-                        • Reviewed progress on migration project<br>
-                        • Action items assigned to team leads<br>
-                        • Follow-up meeting scheduled for Friday<br><br>
-                        <strong>Decisions:</strong><br>
-                        • Move forward with the new architecture proposal<br>
-                        • Allocate additional resources for testing
-                    `;
+                    summaryTitle.textContent = summaryData[option].title;
+                    summaryText.innerHTML = summaryData[option].text;
                     summaryText.style.color = 'var(--text-primary)';
-                    showToast('AI Summary generated');
-                }, 1500);
+                    showToast(summaryData[option].title + ' generated');
+                }, 1200);
             }
         });
     }

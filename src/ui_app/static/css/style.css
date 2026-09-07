@@ -124,32 +124,36 @@ html, body {
     margin-bottom: 20px;
 }
 
-.tabs {
-    display: inline-flex;
-    background: rgba(255, 255, 255, 0.35);
-    border-radius: var(--radius-pill);
-    padding: 4px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+/* Summary options chips */
+.summary-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
 }
 
-.tab-btn {
-    padding: 10px 24px;
-    border: none;
-    background: transparent;
+.option-chip {
+    padding: 8px 14px;
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-pill);
-    font-size: 14px;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.35);
     color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
-.tab-btn.active {
-    background: rgba(255, 255, 255, 0.85);
-    color: var(--accent);
-    box-shadow: 0 2px 12px rgba(95, 39, 205, 0.15);
+.option-chip.active {
+    background: var(--accent);
+    color: white;
+    border-color: transparent;
+}
+
+.option-chip:active {
+    transform: scale(0.96);
 }
 
 .end-session {
@@ -185,16 +189,11 @@ html, body {
     box-shadow: 0 8px 24px rgba(31, 38, 135, 0.1);
 }
 
-.recording-section.collapsed .recording-controls {
-    display: none;
-}
-
 .recording-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 24px;
-    cursor: pointer;
 }
 
 .recording-status {
@@ -221,12 +220,6 @@ html, body {
     font-size: 14px;
     font-weight: 700;
     color: var(--danger);
-}
-
-.toggle-recording {
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: transform 0.3s ease;
 }
 
 .recording-controls {
@@ -298,10 +291,9 @@ html, body {
     color: var(--accent);
 }
 
-/* Summary, Transcript, Technical Sections */
+/* Summary and Transcript Sections */
 .summary-section,
-.transcript-section,
-.technical-section {
+.transcript-section {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
@@ -816,7 +808,6 @@ html, body {
     .recording-section,
     .summary-section,
     .transcript-section,
-    .technical-section,
     .stat-card,
     .section-card,
     .activity-item,
@@ -842,10 +833,6 @@ html, body {
     .record-btn {
         width: 64px;
         height: 64px;
-    }
-
-    .tab-btn {
-        padding: 8px 18px;
     }
 
     .nav-item {

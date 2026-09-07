@@ -24,18 +24,6 @@
         <!-- Main Content -->
         <main class="main-content">
             {% if active_tab == 'meeting' %}
-            <!-- Tabs -->
-            <div class="tabs-container">
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="general">General</button>
-                    <button class="tab-btn" data-tab="technical">Technical</button>
-                </div>
-                <div class="end-session">
-                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    <span>End</span>
-                </div>
-            </div>
-
             <!-- Recording Section -->
             <div class="recording-section">
                 <div class="recording-header">
@@ -43,7 +31,10 @@
                         <span class="recording-dot"></span>
                         <span class="recording-text">Recording</span>
                     </div>
-                    <svg class="icon-sm toggle-recording" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <div class="end-session" id="endSession">
+                        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span>End</span>
+                    </div>
                 </div>
 
                 <div class="recording-controls">
@@ -68,34 +59,17 @@
                     <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
                 </div>
                 <div class="section-content" id="summaryContent">
+                    <div class="summary-options">
+                        <button class="option-chip active" data-option="summary">Summary</button>
+                        <button class="option-chip" data-option="qa">Q&A</button>
+                        <button class="option-chip" data-option="actions">Actions</button>
+                        <button class="option-chip" data-option="decisions">Decisions</button>
+                    </div>
                     <div class="summary-card">
-                        <h3 class="summary-title">AI Summary</h3>
+                        <h3 class="summary-title" id="summaryTitle">AI Summary</h3>
                         <p class="summary-text" id="summaryText">
-                            Tap Think, Deep Think, or Ask to see the AI summary here.
+                            Tap Think to see the AI summary here.
                         </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Technical Details Section -->
-            <div class="technical-section section-content collapsed" id="technicalContent">
-                <div class="section-card">
-                    <h3>Technical Details</h3>
-                    <div class="profile-row">
-                        <span class="profile-label">Audio quality</span>
-                        <span class="profile-value">48kHz / Stereo</span>
-                    </div>
-                    <div class="profile-row">
-                        <span class="profile-label">Language</span>
-                        <span class="profile-value">English (US)</span>
-                    </div>
-                    <div class="profile-row">
-                        <span class="profile-label">Model</span>
-                        <span class="profile-value">Whisper v3</span>
-                    </div>
-                    <div class="profile-row">
-                        <span class="profile-label">Latency</span>
-                        <span class="profile-value">245ms</span>
                     </div>
                 </div>
             </div>

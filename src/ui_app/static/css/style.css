@@ -114,15 +114,43 @@ html, body {
 }
 
 /* Summary options chips */
+.summary-options-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
 .summary-options {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
-    margin-bottom: 10px;
+    flex: 1;
+}
+
+.options-fab {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(95, 39, 205, 0.3);
+    padding: 0;
+}
+
+.options-fab:active {
+    transform: scale(0.92);
 }
 
 .option-chip {
-    padding: 6px 12px;
+    padding: 5px 10px;
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-pill);
     background: rgba(255, 255, 255, 0.35);
@@ -143,6 +171,92 @@ html, body {
 
 .option-chip:active {
     transform: scale(0.96);
+}
+
+/* Floating options menu */
+.floating-options {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 36px;
+    width: 220px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 12px;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(31, 38, 135, 0.15);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.floating-options.open {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.floating-options-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.floating-options-header span {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.options-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.floating-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.floating-option .toggle {
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+.floating-option .toggle::after {
+    width: 16px;
+    height: 16px;
+    top: 1.5px;
+    left: 1.5px;
+}
+
+.floating-option .toggle.active::after {
+    left: 17px;
 }
 
 /* Recording Section */
@@ -283,7 +397,7 @@ html, body {
     margin-bottom: 14px;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    overflow: hidden;
+    position: relative;
 }
 
 .section-header {

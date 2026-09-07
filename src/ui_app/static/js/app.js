@@ -29,7 +29,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Settings toggles
     const toggles = document.querySelectorAll('.toggle');
-    const aiOptionToggles = document.querySelectorAll('.toggle[data-ai-option]');
+
+    // Floating options menu
+    const optionsFab = document.getElementById('optionsFab');
+    const floatingOptions = document.getElementById('floatingOptions');
+    const optionsClose = document.getElementById('optionsClose');
+    const floatingOptionToggles = document.querySelectorAll('.floating-option .toggle');
 
     // Activity items
     const activityItems = document.querySelectorAll('.activity-item');
@@ -102,19 +107,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function initAiOptionToggles() {
+    function initFloatingOptions() {
         const enabledOptions = getAiSummaryOptions();
 
-        aiOptionToggles.forEach(function(toggle) {
-            const option = toggle.getAttribute('data-ai-option');
+        floatingOptionToggles.forEach(function(toggle) {
+            const parent = toggle.closest('.floating-option');
+            const option = parent ? parent.getAttribute('data-option') : null;
+            if (!option) return;
+
             const enabled = enabledOptions.includes(option);
             toggle.classList.toggle('active', enabled);
 
-            toggle.addEventListener('click', function() {
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
                 this.classList.toggle('active');
                 const isActive = this.classList.contains('active');
                 const currentOptions = getAiSummaryOptions();
-                const option = this.getAttribute('data-ai-option');
 
                 if (isActive) {
                     if (!currentOptions.includes(option)) {
@@ -127,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             currentOptions.splice(index, 1);
                         }
                     } else {
-                        // Keep at least one option enabled
                         this.classList.add('active');
                         showToast('At least one AI summary option is required');
                         return;
@@ -135,14 +142,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 setAiSummaryOptions(currentOptions);
-                showToast('AI summary options updated');
+                updateOptionChipsVisibility();
+                updateFloatingOptionToggles();
             });
         });
     }
 
-    // Initialize settings AI option toggles
-    if (aiOptionToggles.length) {
-        initAiOptionToggles();
+    function updateFloatingOptionToggles() {
+        const enabledOptions = getAiSummaryOptions();
+        floatingOptionToggles.forEach(function(toggle) {
+            const parent = toggle.closest('.floating-option');
+            const option = parent ? parent.getAttribute('data-option') : null;
+            if (option) {
+                toggle.classList.toggle('active', enabledOptions.includes(option));
+            }
+        });
+    }
+
+    function openFloatingOptions() {
+        if (floatingOptions) {
+            updateFloatingOptionToggles();
+            floatingOptions.classList.add('open');
+        }
+    }
+
+    function closeFloatingOptions() {
+        if (floatingOptions) {
+            floatingOptions.classList.remove('open');
+        }
+    }
+
+    if (optionsFab) {
+        optionsFab.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openFloatingOptions();
+        });
+    }
+
+    if (optionsClose) {
+        optionsClose.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeFloatingOptions();
+        });
+    }
+
+    if (floatingOptions) {
+        floatingOptions.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+
+    document.addEventListener('click', function() {
+        closeFloatingOptions();
+    });
+
+    // Initialize floating options menu
+    if (floatingOptionToggles.length) {
+        initFloatingOptions();
     }
 
     // Initialize meeting page option chips
@@ -361,9 +417,9 @@ document.addEventListener('DOMContentLoaded', function() {
         scheduleNextTranscript();
     }, 2000);
 
-    // Settings toggles (non-AI)
+    // Settings toggles (non-floating-option)
     toggles.forEach(function(toggle) {
-        if (toggle.hasAttribute('data-ai-option')) {
+        if (toggle.closest('.floating-option')) {
             return;
         }
         toggle.addEventListener('click', function() {

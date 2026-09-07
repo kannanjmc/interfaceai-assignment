@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/')
 def meeting_assistant():
     """Render the meeting assistant mobile UI."""
-    return render_template('index.html')
+    return render_template('index.html', active_tab='meeting')
 
 
 @app.route('/home')

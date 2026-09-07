@@ -21,11 +21,17 @@ OLLAMA_MODEL = 'llama3.2:latest'
 
 def call_ollama(prompt, model=OLLAMA_MODEL):
     """Call a local Ollama instance and return the generated text."""
+    system = (
+        'You are a meeting summary assistant. You always summarize the provided transcript. '
+        'Never say the transcript is too short. Never ask for more information. '
+        'Never explain that you cannot do it. Always output plain text bullet points.'
+    )
     payload = json.dumps({
         'model': model,
+        'system': system,
         'prompt': prompt,
         'stream': False,
-        'options': {'temperature': 0.4}
+        'options': {'temperature': 0.2, 'num_predict': 200}
     }).encode('utf-8')
 
     req = urllib.request.Request(
@@ -114,6 +120,8 @@ def generate_summary_content(option, transcript='', previous=''):
         r"If you have any questions.*?(?:\.|\n)",
         r"Let me know.*?(?:\.|\n)",
         r"However,.*?(?:\.|\n)",
+        r"Unfortunately.*?\.",
+        r"I cannot provide.*?(?:\.|\n)",
     ]
     for pattern in meta_phrases:
         response = re.sub(pattern, '', response, flags=re.IGNORECASE).strip()
